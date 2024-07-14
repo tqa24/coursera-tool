@@ -1,12 +1,6 @@
-# coursera-link-getter
+# Coursera link getter
 
 Chrome extension for getting your coursera assignment link
-
-## Demo
-
-<!-- ![](images/table.png) -->
-
-![](images/demo.png)
 
 ## Installation
 
@@ -17,6 +11,16 @@ Chrome extension for getting your coursera assignment link
 - Step 5: Click "Load unpacked" button
 - Step 6: Choose "dist" folder in the extracted folder
 
-## Note
+## How to use
 
-- Discourage to use in the rush hour
+- Go to your coursera assignment
+- Navigate to "My submission" tab
+- Refresh the page
+- After the button "Click here to get link" appear, click on in to copy link
+
+![alt text](/images/demo.png)
+
+> Note:
+>
+> - Make sure that you have submitted your assignment
+> - If you don't see the button, go to the "My submission" tab and refresh again

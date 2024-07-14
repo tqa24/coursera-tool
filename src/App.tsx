@@ -21,6 +21,9 @@ export default function App() {
 
     // Set the assignment link
     setUrl(data.replace("submit", "review/") + id.split("~")[0]);
+    navigator.clipboard.writeText(
+      data.replace("submit", "review/") + id.split("~")[0]
+    );
   };
 
   return (
@@ -29,7 +32,7 @@ export default function App() {
         className="flex justify-between mt-4 p-2 w-full border bg-blue-100 border-black cursor-pointer"
         onClick={handleCopy}
       >
-        {url == "" ? "Get link" : url}
+        {url == "" ? "Click here to get link" : url}
         {url != "" && (
           <div
             className="rounded-lg flex items-center p-2 bg-slate-400 text-white hover:bg-slate-500 active:bg-slate-600"
