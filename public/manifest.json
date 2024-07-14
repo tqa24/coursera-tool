@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Coursera Link Getter",
+  "description": "Base Level Extension",
+  "version": "1.0",
+  "content_scripts": [
+    {
+      "run_at": "document_end",
+      "js": ["index.js"],
+      "css": ["index.css"],
+      "matches": ["https://www.coursera.org/learn/*"]
+    }
+  ],
+  "action": {
+    "default_icon": "image3.png"
+  },
+  "icons": {
+    "16": "image3.png",
+    "32": "image3.png",
+    "48": "image3.png",
+    "128": "image3.png"
+  }
+}
