@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Coursera Link Getter",
-  "description": "Base Level Extension",
+  "name": "Get Coursera Shareable Link",
+  "description": "Extension to get shareable link in coursera",
   "version": "1.0",
   "content_scripts": [
     {
@@ -12,12 +12,12 @@
     }
   ],
   "action": {
-    "default_icon": "image3.png"
+    "default_icon": "favicon-v2-194x194.png"
   },
   "icons": {
-    "16": "image3.png",
-    "32": "image3.png",
-    "48": "image3.png",
-    "128": "image3.png"
+    "16": "favicon-v2-194x194.png",
+    "32": "favicon-v2-194x194.png",
+    "48": "favicon-v2-194x194.png",
+    "128": "favicon-v2-194x194.png"
   }
 }
