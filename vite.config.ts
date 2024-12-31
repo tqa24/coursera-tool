@@ -1,30 +1,22 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import path from "path";
-const isDevelopment = process.env.NODE_ENV !== "production";
-const fileExtensions = ["js", "jsx", "ts", "tsx", "css"];
+import { defineConfig } from 'vite'
+import { crx } from '@crxjs/vite-plugin'
+import react from '@vitejs/plugin-react'
 
-const alias = {
-  "@": path.resolve(__dirname, "src"),
-};
+import manifest from './src/manifest'
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  mode: isDevelopment ? "development" : "production",
-  resolve: {
-    alias,
-    extensions: fileExtensions.map((extension) => `.${extension}`),
-  },
-  build: {
-    rollupOptions: {
-      output: {
-        dir: "dist",
-        entryFileNames: "index.js",
-        assetFileNames: "index.css",
-        chunkFileNames: "chunk.js",
-        manualChunks: undefined,
+export default defineConfig(({ mode }) => {
+  return {
+    build: {
+      emptyOutDir: true,
+      outDir: 'build',
+      rollupOptions: {
+        output: {
+          chunkFileNames: 'assets/chunk-[hash].js',
+        },
       },
     },
-  },
-});
+
+    plugins: [crx({ manifest }), react()],
+  }
+})
