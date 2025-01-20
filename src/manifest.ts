@@ -19,9 +19,13 @@ export default defineManifest({
     default_popup: 'popup.html',
     default_icon: 'img/favicon-v2-194x194.png',
   },
+  background: {
+    service_worker: 'src/background/index.ts',
+    type: 'module',
+  },
   content_scripts: [
     {
-      matches: ['https://www.coursera.org/learn/*'],
+      matches: ['https://www.coursera.org/*'],
       js: ['src/contentScript/index.ts'],
     },
   ],
@@ -36,5 +40,6 @@ export default defineManifest({
       matches: [],
     },
   ],
-  permissions: ['scripting', 'activeTab'],
+  permissions: ['scripting', 'activeTab', 'tabs', 'storage', 'cookies'],
+  host_permissions: ['https://www.coursera.org/*', 'https://generativelanguage.googleapis.com/*'],
 });

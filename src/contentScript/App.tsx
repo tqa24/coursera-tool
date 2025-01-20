@@ -1,4 +1,16 @@
 import { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom/client';
+import {
+  handleAutoquiz,
+  handleReview,
+  handlePeerGradedAssignment,
+  resolveWeekMaterial,
+  handleDiscussionPrompt,
+  getMaterial,
+} from './utils';
+import { Button } from './components/Button';
+import Checkbox from './components/Checkbox';
+import { SettingOptions } from './type';
 
 function replaceLast(x: string, y: string, z: string) {
   var a = x.split('');
@@ -26,106 +38,221 @@ export function truncateUrl(url: string, maxLength = 50) {
 export default function App() {
   const [url, setUrl] = useState('');
   const [isCopied, setIsCopied] = useState(false);
+  const [courseList, setCourseList] = useState<any>([]);
+  const [currentCourse, setCurrentCourse] = useState('');
+  const [isHidden, setIsHidden] = useState(true);
+  const [options, setOptions] = useState<SettingOptions>({
+    isAutoSubmitQuiz: false,
+    isAutoGrade: false,
+  });
+  const [isLoading, setIsLoading] = useState<any>({
+    isLoadingReview: false,
+    isLoadingQuiz: false,
+    isLoadingSubmitPeerGrading: false,
+    isLoadingDiscuss: false,
+    isLoadingCompleteWeek: false,
+  });
 
   useEffect(() => {
-    getLink();
+    (async () => {
+      let courseList = await fetch('https://ecec123ecec.github.io/coursera-db/courseMap.json').then(
+        (res) => res.json(),
+      );
+      const { course } = await chrome.storage.local.get('course');
+      const { isAutoSubmitQuiz } = await chrome.storage.local.get('isAutoSubmitQuiz');
+      // console.log(isAutoSubmitQuiz);
+
+      setCurrentCourse(course);
+      setCourseList(courseList);
+      setOptions({ isAutoSubmitQuiz: isAutoSubmitQuiz, isAutoGrade: false });
+      await getMaterial();
+      await handleAutoquiz();
+    })();
   }, []);
 
-  const getLink = async () => {
-    let lureId = '';
-    const text = (document.querySelector('body > script:nth-child(3)') as any)?.innerText;
-
-    const matchId1 = text.match(/(\d+~[A-Za-z0-9-_]+)/);
-    if (matchId1) {
-      lureId += matchId1[0];
-    } else {
-      setUrl("You haven't done your assignment yet");
-      return;
-    }
-
-    const matchId2 = window.location.href.match(/\/peer\/([^\/]+)/);
-    if (matchId2) {
-      lureId += '~' + matchId2[1];
-    } else {
-      setUrl("You haven't done your assignment yet");
-      return;
-    }
-
-    try {
-      const data = await fetch(
-        `https://www.coursera.org/api/onDemandPeerAssignmentPermissions.v1/${lureId}/?fields=deleteSubmission%2ClistSubmissions%2CreviewPeers%2CviewReviewSchema%2CanonymousPeerReview%2ConDemandPeerSubmissionProgresses.v1(latestSubmissionSummary%2ClatestDraftSummary%2ClatestAttemptSummary)%2ConDemandPeerReceivedReviewProgresses.v1(evaluationIfReady%2CearliestCompletionTime%2CreviewCount%2CdefaultReceivedReviewRequiredCount)%2ConDemandPeerDisplayablePhaseSchedules.v1(currentPhase%2CphaseEnds%2CphaseStarts)&includes=receivedReviewsProgress%2CsubmissionProgress%2CphaseSchedule`,
-      ).then((res) => res.json());
-      const id =
-        data.linked?.['onDemandPeerSubmissionProgresses.v1'][0]?.latestSubmissionSummary?.computed
-          .id;
-      setUrl(replaceLast(window.location.href, 'submit', '') + '/review/' + id);
-    } catch (error) {
-      setUrl('Go to assignment page, then refresh');
-    }
-  };
-
-  const handleCopy = () => {
-    setIsCopied(true);
-    navigator.clipboard.writeText(url);
-  };
+  // useEffect(() => {
+  //   (async () => {
+  //     await resolveWeekMaterial();
+  //     if (location.href.includes('assignment-submission')) {
+  //       await handleAutoquiz();
+  //     } else if (location.href.includes('/peer/')) {
+  //       if (location.href.includes('/give-feedback') || location.href.includes('/review-next')) {
+  //         await handleReview();
+  //       } else {
+  //         await handlePeerGradedAssignment();
+  //       }
+  //     } else if (location.href.includes('/discussionPrompt/')) {
+  //       await handleDiscussionPrompt();
+  //       console.log('zo');
+  //     }
+  //   })();
+  // }, []);
 
   return (
-    <div className="w-full">
-      <div className="flex items-center">
-        <span className="flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg dark:bg-gray-600 dark:text-white dark:border-gray-600">
-          URL
-        </span>
-        <div className="relative w-full">
-          <input
-            id="website-url"
-            type="text"
-            aria-describedby="helper-text-explanation"
-            className="border border-e-0 border-gray-300 dark:!text-gray-400 text-sm border-s-0 focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 !bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            defaultValue={url}
-            readOnly
-            disabled
-          />
-        </div>
-        <button
-          data-tooltip-target="tooltip-website-url"
-          data-copy-to-clipboard-target="website-url"
-          className="flex-shrink-0 z-10 inline-flex items-center py-3 px-4 text-sm font-medium text-center text-white bg-blue-700 rounded-e-lg hover:bg-blue-800 focus:ring-0 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 border border-blue-700 dark:border-blue-600 hover:border-blue-800 dark:hover:border-blue-700"
-          type="button"
-          onClick={handleCopy}
+    <>
+      <div
+        className={`w-10 h-10 rounded-full fixed bottom-3 right-6 p-2 cursor-pointer bg-no-repeat bg-center bg-cover transition-all duration-300 ${!isHidden ? 'translate-y-0' : 'translate-y-[100px]'}`}
+        onClick={() => setIsHidden((pre) => !pre)}
+        style={{
+          backgroundImage:
+            'url(https://d3njjcbhbojbot.cloudfront.net/api/utilities/v1/imageproxy/https://coursera_assets.s3.amazonaws.com/images/71180874e10407031ecd7b62e27dec77.png?auto=format%2Ccompress&dpr=1&w=32&h=32)',
+          zIndex: 1000,
+        }}
+      ></div>
+      <div
+        className={`bg-white absolute border border-black bottom-2 p-4 right-0 w-[500px] rounded-md transition-all ${isHidden ? '-translate-x-0' : 'translate-x-[500px]'}`}
+      >
+        <div
+          className="absolute top-2 right-2 cursor-pointer"
+          onClick={() => setIsHidden((prev) => !prev)}
         >
-          {!isCopied ? (
-            <span id="default-icon">
-              <svg
-                className="w-4 h-4"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 18 20"
-              >
-                <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
-              </svg>
-            </span>
-          ) : (
-            <span id="success-icon" className="items-center">
-              <svg
-                className="w-4 h-4"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 16 12"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M1 5.917 5.724 10.5 15 1.5"
-                />
-              </svg>
-            </span>
-          )}
-        </button>
+          <ChevronRightIcon />
+        </div>
+
+        <div className="flex gap-2">
+          <Button
+            title="Auto do readings skip watching videos"
+            onClick={async () => {
+              setIsLoading((prev: any) => ({ ...prev, isLoadingCompleteWeek: true }));
+              await resolveWeekMaterial();
+              setIsLoading((prev: any) => ({ ...prev, isLoadingCompleteWeek: false }));
+            }}
+            isLoading={isLoading.isLoadingCompleteWeek}
+          >
+            Auto complete week
+          </Button>
+          <Button
+            title="Auto do discussion prompt"
+            onClick={async () => {
+              setIsLoading((prev: any) => ({ ...prev, isLoadingDiscuss: true }));
+              await handleDiscussionPrompt();
+              setIsLoading((prev: any) => ({ ...prev, isLoadingDiscuss: false }));
+            }}
+            isLoading={isLoading.isLoadingDiscuss}
+          >
+            Auto discussion
+          </Button>
+        </div>
+        <div className="flex gap-2 mt-2">
+          <Button
+            onClick={async () => {
+              setIsLoading((prev: any) => ({ ...prev, isLoadingSubmitPeerGrading: true }));
+              await handlePeerGradedAssignment();
+              setIsLoading((prev: any) => ({ ...prev, isLoadingSubmitPeerGrading: false }));
+            }}
+            isLoading={isLoading.isLoadingSubmitPeerGrading}
+          >
+            Auto submit assignment
+          </Button>
+          <Button
+            onClick={async () => {
+              setIsLoading((prev: any) => ({ ...prev, isLoadingReview: true }));
+              await handleReview();
+              setIsLoading((prev: any) => ({ ...prev, isLoadingReview: false }));
+            }}
+            isLoading={isLoading.isLoadingReview}
+          >
+            Auto grade
+          </Button>
+        </div>
+        <div className="flex gap-2 mt-2">
+          {/* {courseList[currentCourse]?.status === 'done' && ( */}
+          <Button
+            onClick={async () => {
+              String.prototype.normalize = function () {
+                return this.replaceAll('\u00A0', '')
+                  .replace(/\s+/g, ' ')
+                  .replaceAll('\n', ' ')
+                  .trim();
+              };
+              setIsLoading((prev: any) => ({ ...prev, isLoadingQuiz: true }));
+              await handleAutoquiz();
+              setIsLoading((prev: any) => ({ ...prev, isLoadingQuiz: false }));
+            }}
+            isLoading={isLoading.isLoadingQuiz}
+          >
+            Auto quiz
+          </Button>
+          {/* )} */}
+        </div>
+        <div className="grid grid-cols-2 mt-3">
+          <Checkbox
+            id={'auto-submit-quiz'}
+            checked={options.isAutoSubmitQuiz}
+            children={'Auto submit quiz'}
+            onChange={(e: HTMLInputElement) => {
+              setOptions((prev) => {
+                chrome.storage.local.set({ isAutoSubmitQuiz: !prev.isAutoSubmitQuiz });
+                return { ...prev, isAutoSubmitQuiz: !prev.isAutoSubmitQuiz };
+              });
+              // console.log(options.isAutoSubmitQuiz);
+            }}
+          />
+          {/* <Checkbox
+            id={'auto-grade'}
+            checked={options.isAutoGrade}
+            children={'Auto grade'}
+            onChange={(e: HTMLInputElement) =>
+              setOptions((prev) => ({ ...prev, isAutoGrade: !prev.isAutoGrade }))
+            }
+          /> */}
+        </div>
+        <div>
+          <span className="font-semibold mr-2">Source:</span>
+          <select
+            className="py-1 px-3 border rounded-lg focus-visible:outline-none"
+            onChange={(e) => {
+              chrome.storage.local.set({ course: e.target.value });
+              setCurrentCourse(e.target.value);
+            }}
+            value={currentCourse}
+          >
+            {Object.entries(courseList).map(([key, value]: any) => (
+              <option key={key} value={key} disabled={value?.status === 'ongoing'}>
+                {`${key}  -  (${value?.status.toUpperCase()})`}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
+
+export const LoadingIcon = () => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={16}
+      height={16}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="lucide lucide-rotate-cw rotate"
+    >
+      <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+      <path d="M21 3v5h-5" />
+    </svg>
+  );
+};
+
+export const ChevronRightIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={24}
+    height={24}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="lucide lucide-chevrons-right"
+  >
+    <path d="m6 17 5-5-5-5" />
+    <path d="m13 17 5-5-5-5" />
+  </svg>
+);

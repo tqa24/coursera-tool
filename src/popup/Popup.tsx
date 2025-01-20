@@ -19,37 +19,46 @@ function replaceLast(x: string, y: string, z: string) {
 
 export const Popup = () => {
   const [url, setUrl] = useState('');
+  const [courseList, setCourseList] = useState<any>([]);
+  const [currentCourse, setCurrentCourse] = useState('');
   const [isCopied, setIsCopied] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isGrading, setIsGrading] = useState(false);
 
   useEffect(() => {
+    (async () => {
+      let courseList = await fetch('https://ecec123ecec.github.io/coursera-db/courseMap.json').then(
+        (res) => res.json(),
+      );
+      const { course } = await chrome.storage.local.get('course');
+      setCurrentCourse(course);
+      setCourseList(courseList);
+    })();
+  }, []);
+
+  useEffect(() => {
+    chrome.runtime.onMessage.addListener((message) => {
+      if (message.type === 'UPDATE_GRADING_STATUS') {
+        setIsGrading(message.isGrading);
+      }
+    });
     getLink();
   }, []);
 
   const getLink = async () => {
+    setIsLoading(true);
     const html = await fetchHtmlSource();
     const parser = new DOMParser();
     const doc = parser.parseFromString(html || '', 'text/html');
-    const currentUrl: string =
-      doc.querySelector('meta[property="og:url"]')?.getAttribute('content') || '';
 
-    let lureId = '';
     const text = (doc.querySelector('body > script:nth-child(3)') as any)?.innerText;
-
     const matchId1 = text.match(/(\d+~[A-Za-z0-9-_]+)/);
-    if (matchId1) {
-      lureId += matchId1[0];
-    } else {
-      setUrl('Go to submission page, then refresh');
-      return;
-    }
-
-    const matchId2 = currentUrl.match(/\/peer\/([^\/]+)/);
-    if (matchId2) {
-      lureId += '~' + matchId2[1];
-    } else {
-      setUrl('Go to submission page, then refresh');
-      return;
-    }
+    const userId = matchId1?.[1].split('~')[0];
+    const metadata = JSON.parse(
+      doc.querySelector('.m-a-0.body > a')?.getAttribute('data-click-value') ?? '',
+    );
+    // console.log(metadata);
+    let lureId = `${userId}~${metadata.course_id}~${metadata.item_id}`;
 
     try {
       const data = await fetch(
@@ -58,7 +67,10 @@ export const Popup = () => {
       const id =
         data.linked?.['onDemandPeerSubmissionProgresses.v1'][0]?.latestSubmissionSummary?.computed
           .id;
-      setUrl(replaceLast(currentUrl, 'submit', '') + '/review/' + id);
+
+      let url = `https:/www.coursera.org/learn/${metadata.open_course_slug}/peer/${metadata.item_id}/course-project/review/${id}`;
+      setUrl(url);
+      setIsLoading(false);
     } catch (error) {
       setUrl("You haven't done your assignment yet");
     }
@@ -88,8 +100,12 @@ export const Popup = () => {
     }
   };
 
-  function handleGrade() {
-    chrome.tabs.query(
+  async function handleGrade() {
+    setIsGrading(true);
+    setTimeout(() => {
+      setIsGrading(false);
+    }, 2000);
+    await chrome.tabs.query(
       {
         active: true,
         windowType: 'normal',
@@ -101,46 +117,65 @@ export const Popup = () => {
             tabId: tabs[0].id ?? 0,
           },
           func: function () {
-            chrome.storage.sync.get([], () => {
-              const txtVal = 'Good';
-              const formParts = document.getElementsByClassName('rc-FormPart');
-              for (const form of formParts) {
-                let e = form.getElementsByClassName('peer-option-input');
-                let pts = Array.from(
-                  form.querySelectorAll('.option-contents > div:nth-child(1)'),
-                ).map((item) => {
-                  const match = item.textContent?.match(/\d+/);
-                  if (match) {
-                    return parseInt(match[0], 10);
-                  } else {
-                    return 0;
-                  }
-                });
-                if (e.length > 0) {
-                  if (pts[0] < pts[e.length - 1]) {
-                    (e[e.length - 1] as HTMLElement).click();
-                  } else {
-                    (e[0] as HTMLElement).click();
-                  }
-                }
-
-                const textAreas = form.getElementsByClassName(
-                  'c-peer-review-submit-textarea-input-field',
-                );
-
-                for (let textArea of textAreas) {
-                  (textArea as HTMLElement).click();
-                  (textArea as HTMLElement).focus();
-                  document.execCommand('insertText', false, txtVal);
-                }
+            chrome.storage.sync.get([], async () => {
+              try {
+                (
+                  document.querySelector('button[data-js="open-course-link"]') as HTMLInputElement
+                ).click();
+              } catch (error) {
+                console.log(error);
               }
+              try {
+                const txtVal = 'Good';
+                let formParts = document.getElementsByClassName('rc-FormPart');
 
-              setTimeout(() => {
-                const submitBtn = document
-                  .getElementsByClassName('rc-FormSubmit')[0]
-                  .querySelector('button');
-                (submitBtn as HTMLElement).click();
-              }, 500);
+                // Wait until formParts are loaded
+                while (formParts.length === 0) {
+                  await new Promise((resolve) => setTimeout(resolve, 1000));
+                  console.log(formParts);
+                  formParts = document.getElementsByClassName('rc-FormPart');
+                }
+
+                for (const form of formParts) {
+                  let e = form.getElementsByClassName('peer-option-input');
+
+                  let pts = Array.from(
+                    form.querySelectorAll('.option-contents > div:nth-child(1)'),
+                  ).map((item) => {
+                    const match = item.textContent?.match(/\d+/);
+                    return match ? parseInt(match[0], 10) : 0;
+                  });
+
+                  if (e.length > 0) {
+                    // Choose based on the points comparison
+                    if (pts[0] < pts[e.length - 1]) {
+                      (e[e.length - 1] as HTMLElement).click();
+                    } else {
+                      (e[0] as HTMLElement).click();
+                    }
+                  }
+
+                  const textAreas = form.querySelectorAll(
+                    '.c-peer-review-submit-textarea-input-field, div[data-testid="peer-review-multi-line-input-field"]',
+                  );
+
+                  for (let textArea of textAreas) {
+                    (textArea as HTMLElement).click();
+                    (textArea as HTMLElement).focus();
+                    document.execCommand('insertText', false, txtVal);
+                  }
+                }
+
+                // Delay before submitting
+                setTimeout(() => {
+                  const submitBtn = document
+                    .getElementsByClassName('rc-FormSubmit')[0]
+                    .querySelector('button');
+                  (submitBtn as HTMLElement).click();
+                }, 700);
+              } catch (error) {
+                console.log(error);
+              }
             });
           },
         });
@@ -176,17 +211,21 @@ export const Popup = () => {
             onClick={handleCopy}
           >
             {!isCopied ? (
-              <span id="default-icon">
-                <svg
-                  className="w-4 h-4"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 18 20"
-                >
-                  <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
-                </svg>
-              </span>
+              isLoading ? (
+                <LoadingIcon />
+              ) : (
+                <span id="default-icon">
+                  <svg
+                    className="w-4 h-4"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor"
+                    viewBox="0 0 18 20"
+                  >
+                    <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
+                  </svg>
+                </span>
+              )
             ) : (
               <span id="success-icon" className="items-center">
                 <svg
@@ -214,13 +253,47 @@ export const Popup = () => {
           <button
             id="submit-btn"
             onClick={handleGrade}
-            className="flex-shrink-0 inline-flex items-center py-1 px-4 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-0 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 border border-blue-700 dark:border-blue-600 hover:border-blue-800 dark:hover:border-blue-700"
+            className="flex-shrink-0 inline-flex items-center py-1 px-4 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-0 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 border border-blue-700 dark:border-blue-600 hover:border-blue-800 dark:hover:border-blue-700 gap-2"
           >
+            {isGrading ? <LoadingIcon /> : ''}
             Start
           </button>
         </div>
+        <select
+          className="outline py-1 px-3 border-4 border-transparent rounded-lg"
+          onChange={(e) => {
+            chrome.storage.local.set({ course: e.target.value });
+          }}
+        >
+          {Object.entries(courseList).map(([key, value]) => (
+            <option key={key} value={key} selected={key == currentCourse}>
+              {key}
+            </option>
+          ))}
+        </select>
+        <div className="pb-4"></div>
       </div>
     </main>
+  );
+};
+
+const LoadingIcon = () => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={16}
+      height={16}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="lucide lucide-rotate-cw rotate"
+    >
+      <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+      <path d="M21 3v5h-5" />
+    </svg>
   );
 };
 
