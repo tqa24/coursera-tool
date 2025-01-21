@@ -1,16 +1,6 @@
 import * as cheerio from 'cheerio';
 import { Course, QuizItem } from './type';
-import data from '../keys/WED201c.json';
-
-String.prototype.normalize = function () {
-  return (
-    this.replaceAll('\u00A0', '')
-      .replace(/\s+/g, ' ')
-      .replaceAll('\n', ' ')
-      // .replace(/\s{2,}/g, ' ')
-      .trim()
-  );
-};
+import data from '../keys/SWE201c.json';
 
 const waitForSelector = (selector: string, timeout = 5000) => {
   return new Promise<any>((resolve, reject) => {
@@ -30,7 +20,7 @@ const waitForSelector = (selector: string, timeout = 5000) => {
 };
 
 export const getMaterial = async () => {
-  await waitForSelector('button.nostyle.link-button[aria-expanded="false"]', 20000).catch(
+  await waitForSelector('button.nostyle.link-button[aria-expanded="false"]', 5000).catch(
     (error) => {},
   );
   document
@@ -110,17 +100,16 @@ export const resolveWeekMaterial = async () => {
 
 export const handleAutoquiz = async (isWithGemini: boolean = false) => {
   let prod = false;
-  if (!location.href.includes('assignment-submission')) {
+  if (
+    !location.href.includes('assignment-submission') &&
+    !location.href.includes('exam') &&
+    !location.href.includes('quiz')
+  ) {
     return;
   }
-  try {
-    (document.querySelector("button[aria-label='Back']") as HTMLInputElement).click();
-  } catch (error) {}
-  let button = document.querySelector("button[data-testid='CoverPageActionButton']");
-  while (button === null) {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    button = document.querySelector("button[data-testid='CoverPageActionButton']");
-  }
+  await waitForSelector("button[data-testid='CoverPageActionButton']", 1000)
+    .then((item) => item.click())
+    .catch((error) => {});
   // const courseMap = await fetch('https://ecec123ecec.github.io/coursera-db/courseMap.json').then(
   //   (res) => res.json(),
   // );
@@ -136,13 +125,16 @@ export const handleAutoquiz = async (isWithGemini: boolean = false) => {
     courses = data;
   }
 
-  (document.querySelector("button[data-testid='CoverPageActionButton']") as HTMLElement)?.click();
-  (
-    document.querySelector("button[data-testid='StartAttemptModal__primary-button']") as HTMLElement
-  )?.click();
+  waitForSelector(
+    "button[data-testid='StartAttemptModal__primary-button'], [data-testid='action-button']",
+  )
+    .then((item) => item.click())
+    .catch((error) => {});
 
-  await waitForSelector('.css-1hhf6i');
-  let questions = document.querySelectorAll('.css-1hhf6i');
+  await waitForSelector('.css-1hhf6i, .rc-FormPartsQuestion');
+  let questions = document.querySelectorAll('.css-1hhf6i, .rc-FormPartsQuestion');
+  // console.log('questions');
+  // console.log(questions);
 
   if (isWithGemini) {
     await doWithGemini(questions);
@@ -151,16 +143,23 @@ export const handleAutoquiz = async (isWithGemini: boolean = false) => {
   }
 
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  waitForSelector('input#agreement-checkbox-base').then((element: HTMLInputElement) =>
-    element.click(),
-  );
-  waitForSelector('button[data-testid="submit-button"]').then((element: HTMLInputElement) =>
-    element.click(),
-  );
+  waitForSelector('input#agreement-checkbox-base')
+    .then((element: HTMLInputElement) => element.click())
+    .catch((error) => {
+      console.log(error);
+    });
+  waitForSelector('button[data-testid="submit-button"], button[data-test="submit-button"]')
+    .then((element: HTMLInputElement) => {
+      element.click();
+      element.scrollIntoView();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
   if (isAutoSubmitQuiz) {
-    waitForSelector('button[data-testid="dialog-submit-button"]').then(
-      (element: HTMLInputElement) => element.click(),
-    );
+    waitForSelector('button[data-testid="dialog-submit-button"]', 2000)
+      .then((element: HTMLInputElement) => element.click())
+      .catch((error) => {});
     // //> =====================================
     // let yourGrade = document.querySelector('div[data-testid="AssignmentViewTopBanner"]');
     // while (!yourGrade) {
@@ -261,11 +260,20 @@ export const doWithGemini = async (questions: NodeListOf<Element>) => {
 };
 
 export const doWithLocal = async (questions: any, courses: Course) => {
+  String.prototype.normalize = function () {
+    return (
+      this.replaceAll('\u00A0', '')
+        .replace(/\s+/g, ' ')
+        .replaceAll('\n', ' ')
+        // .replace(/\s{2,}/g, ' ')
+        .trim()
+    );
+  };
   let outSrcList: any[] = [];
 
   questions.forEach((question: any, i: number) => {
-    const questionChild = question.querySelector('.css-x3q7o9 > div:nth-child(2)');
-    const text = questionChild.innerText?.normalize() ?? '';
+    const questionChild = question.querySelector('.css-x3q7o9 > div:nth-child(2), .rc-CML');
+    const text = questionChild.textContent?.normalize() ?? '';
 
     const foundedQuestions = courses.quizSrc.filter(
       (item) =>
@@ -280,7 +288,8 @@ export const doWithLocal = async (questions: any, courses: Course) => {
         let keys = question.querySelectorAll('.rc-Option');
         if (keys.length > 0) {
           for (const key of keys) {
-            const keyText = key.querySelector('p span')?.innerText?.normalize().toLowerCase() ?? '';
+            const keyText =
+              key.querySelector('p span')?.textContent?.normalize().toLowerCase() ?? '';
             // console.log(keyText);
             if (
               foundedQuestion.definition.toLowerCase().includes(keyText) &&
@@ -288,23 +297,33 @@ export const doWithLocal = async (questions: any, courses: Course) => {
             ) {
               choosed = true;
               let input = key.querySelector('input');
-              // console.log(input);
+              console.log(input);
               if (input) {
                 input.click();
               }
             }
           }
         } else {
+          console.log(text);
+
           try {
-            let inputText = question.querySelector('input[type="text"]');
+            let inputText = question.querySelector(
+              'input[type="text"], textarea, input[type="number"]',
+            );
             (inputText as HTMLInputElement).click();
-            (inputText as HTMLInputElement).value = foundedQuestion.definition;
+            if (inputText.getAttribute('type') === 'number') {
+              (inputText as HTMLInputElement).value = '5';
+            } else {
+              (inputText as HTMLInputElement).value = foundedQuestion.definition;
+            }
             const event = new Event('change', { bubbles: true });
             inputText.dispatchEvent(event);
           } catch (error) {}
         }
       });
       if (!choosed) {
+        console.log('out dap an');
+
         let input = question.querySelector('input');
         if (input) {
           input.click();
@@ -312,11 +331,12 @@ export const doWithLocal = async (questions: any, courses: Course) => {
       }
     } else {
       console.log(`${text.normalize()}`);
+      console.log('out src');
 
       let answer = question.querySelectorAll('.rc-Option');
       outSrcList.push({
         term: `${text} | ${Array.from(answer)
-          .map((item: any) => item.innerText.normalize())
+          .map((item: any) => item.textContent.normalize())
           .join(' | ')}`,
         definition: '',
       });
@@ -331,36 +351,6 @@ export const doWithLocal = async (questions: any, courses: Course) => {
   });
   const prompt = `${JSON.stringify(outSrcList)} You are given a json, answer this json by choosing the answer from the term which were divided by the | symbol and fill that to this json but with definition field filled, give me the json only, and remember not to modify anything in the attribute term, you are only allowed to modify definition attribute. The answer in definition field must be a string included in the term field, just give the answer, doesn't need to explain it, if the question has more than 1 answer, give the answer join by \" | \" `;
   console.log(prompt);
-
-  const textQuestions = document.querySelectorAll(
-    'div[data-testid="part-Submission_RegexQuestion"], div[data-testid="part-Submission_TextReflectQuestion"], div[data-testid="part-Submission_NumericQuestion"]',
-  );
-
-  textQuestions.forEach(async (question: any, i) => {
-    const answer =
-      "Entrepreneurial motivation, the driving force behind an entrepreneur's actions, is crucial for strategic decision-making.  Three key factors initiate, energize, and maintain goal-directed behavior in this context:  Firstly, *initiation* stems from a perceived opportunity, often fueled by a strong need for achievement or autonomy.  This could be identifying an unmet market need, developing a novel technology, or capitalizing on a trend.";
-    try {
-      const inputText = question.querySelector('input[type="text"]');
-      (inputText as HTMLInputElement).click();
-      (inputText as HTMLInputElement).value = answer;
-      const event = new Event('change', { bubbles: true });
-      inputText.dispatchEvent(event);
-    } catch (error) {}
-    try {
-      const areaText = question.querySelector('textarea');
-      (areaText as HTMLInputElement).click();
-      (areaText as HTMLInputElement).value = answer;
-      const event = new Event('change', { bubbles: true });
-      areaText.dispatchEvent(event);
-    } catch (error) {}
-    try {
-      const inputText = question.querySelector('input[type="number"]');
-      (inputText as HTMLInputElement).click();
-      (inputText as HTMLInputElement).value = '5';
-      const event = new Event('change', { bubbles: true });
-      inputText.dispatchEvent(event);
-    } catch (error) {}
-  });
 };
 
 export const waitMain = async () => {
@@ -373,18 +363,23 @@ export const waitMain = async () => {
 };
 
 export const handlePeerGradedAssignment = async () => {
-  const mySubmissionTab = await waitForSelector('div[role="tablist"] button:nth-child(2)');
-  (mySubmissionTab as HTMLElement).click();
+  await waitForSelector('div[role="tablist"] button:nth-child(2)')
+    .then((item) => item.click())
+    .catch((error) => {});
   let tempAns =
     'Identify key elements of a successful content marketing campaign. Copying someone else’s content marketing ideas and publishing something';
   try {
-    await waitForSelector('#main input[aria-label="Project Title"]', 20000).then((item) => {
-      (item as HTMLInputElement).click();
-      (item as HTMLInputElement).value = tempAns;
-      const event = new Event('change', { bubbles: true });
-      item!.dispatchEvent(event);
-    });
-    let textInputs = document.querySelectorAll('#main input[type="text"]:not([aria-label="URL"])');
+    await waitForSelector('#main input[aria-label="Project Title"]', 20000)
+      .then((item) => {
+        (item as HTMLInputElement).click();
+        (item as HTMLInputElement).value = tempAns;
+        const event = new Event('change', { bubbles: true });
+        item!.dispatchEvent(event);
+      })
+      .catch((error) => {});
+    let textInputs = document.querySelectorAll(
+      '#main input[type="text"]:not([aria-label="URL"]), textarea:not([aria-label="URL"])',
+    );
     textInputs.forEach((input) => {
       (input as HTMLInputElement).click();
       (input as HTMLInputElement).value = tempAns;
@@ -415,17 +410,17 @@ export const handlePeerGradedAssignment = async () => {
       }),
     );
   });
-  await new Promise((resolve) => setTimeout(resolve, 3000));
+  // await new Promise((resolve) => setTimeout(resolve, 3000));
 
-  await waitForSelector('#agreement-checkbox-base', 20000).then((element: HTMLInputElement) =>
-    element.click(),
-  );
-  await waitForSelector('button[aria-label="Submit"]', 20000).then((element: HTMLInputElement) =>
-    element.click(),
-  );
-  await waitForSelector('button[data-testid="dialog-submit-button"]', 20000).then(
-    (element: HTMLInputElement) => element.click(),
-  );
+  await waitForSelector('#agreement-checkbox-base', 8000)
+    .then((element: HTMLInputElement) => element.click())
+    .catch((error) => {});
+  await waitForSelector('button[aria-label="Submit"]', 8000)
+    .then((element: HTMLInputElement) => element.click())
+    .catch((error) => {});
+  await waitForSelector('button[data-testid="dialog-submit-button"]', 8000)
+    .then((element: HTMLInputElement) => element.click())
+    .catch((error) => {});
 };
 
 export const handleReview = async () => {
@@ -437,18 +432,13 @@ export const handleReview = async () => {
     .then((element: HTMLInputElement) => element.click())
     .catch((error) => {});
 
-  let countTxt = await waitForSelector('td[data-testid="review-count"]', 1000)
-    .then((item) => item.innerText)
-    .catch((error) => {});
-  console.log(countTxt);
-
+  let countTxt = '';
   do {
-    await review();
-    console.log('review ne');
-
     countTxt = await waitForSelector('td[data-testid="review-count"]', 1000)
       .then((item) => item.innerText)
       .catch((error) => {});
+    await review();
+    console.log('review ne');
   } while (countTxt?.includes('left to complete'));
 };
 

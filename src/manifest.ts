@@ -25,7 +25,7 @@ export default defineManifest({
   },
   content_scripts: [
     {
-      matches: ['https://www.coursera.org/*'],
+      matches: ['https://www.coursera.org/learn/*'],
       js: ['src/contentScript/index.ts'],
     },
   ],

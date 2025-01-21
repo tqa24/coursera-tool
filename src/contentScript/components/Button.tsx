@@ -1,4 +1,4 @@
-import { LoadingIcon } from '../App';
+import { LoadingIcon } from './Icon';
 
 export const Button = ({ children, onClick, isLoading, title }: any) => {
   return (

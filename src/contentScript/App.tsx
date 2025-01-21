@@ -11,6 +11,8 @@ import {
 import { Button } from './components/Button';
 import Checkbox from './components/Checkbox';
 import { SettingOptions } from './type';
+import Feedback from './components/Feedback';
+import { ChevronRightIcon } from './components/Icon';
 
 function replaceLast(x: string, y: string, z: string) {
   var a = x.split('');
@@ -45,6 +47,7 @@ export default function App() {
     isAutoSubmitQuiz: false,
     isAutoGrade: false,
   });
+  const [assignmentList, setAssignmentList] = useState<any>([]);
   const [isLoading, setIsLoading] = useState<any>({
     isLoadingReview: false,
     isLoadingQuiz: false,
@@ -65,8 +68,8 @@ export default function App() {
       setCurrentCourse(course);
       setCourseList(courseList);
       setOptions({ isAutoSubmitQuiz: isAutoSubmitQuiz, isAutoGrade: false });
-      await getMaterial();
-      await handleAutoquiz();
+      // await getMaterial();
+      // await handleAutoquiz();
     })();
   }, []);
 
@@ -100,7 +103,7 @@ export default function App() {
         }}
       ></div>
       <div
-        className={`bg-white absolute border border-black bottom-2 p-4 right-0 w-[500px] rounded-md transition-all ${isHidden ? '-translate-x-0' : 'translate-x-[500px]'}`}
+        className={`bg-white absolute border border-black bottom-2 p-4 right-0 w-[400px] rounded-md transition-all ${isHidden ? '-translate-x-0' : 'translate-x-[500px]'}`}
       >
         <div
           className="absolute top-2 right-2 cursor-pointer"
@@ -214,45 +217,8 @@ export default function App() {
             ))}
           </select>
         </div>
+        <Feedback />
       </div>
     </>
   );
 }
-
-export const LoadingIcon = () => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={16}
-      height={16}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="lucide lucide-rotate-cw rotate"
-    >
-      <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
-      <path d="M21 3v5h-5" />
-    </svg>
-  );
-};
-
-export const ChevronRightIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={24}
-    height={24}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="lucide lucide-chevrons-right"
-  >
-    <path d="m6 17 5-5-5-5" />
-    <path d="m13 17 5-5-5-5" />
-  </svg>
-);

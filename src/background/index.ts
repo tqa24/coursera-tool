@@ -588,7 +588,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
             }
           });
         };
-        await getMaterial();
+        // await getMaterial();
         // waitForSelector('#main').then(async (item) => {
         //   if (location.href.includes('assignment-submission')) {
         //     await handleAutoquiz();
