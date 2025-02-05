@@ -4,49 +4,38 @@ import {
   handleAutoquiz,
   handleReview,
   handlePeerGradedAssignment,
-  resolveWeekMaterial,
   handleDiscussionPrompt,
   getMaterial,
+  requestGradingByPeer,
+  waitForSelector,
+  getAllMaterials,
+  resolveWeekMaterial,
 } from './utils';
 import { Button } from './components/Button';
 import Checkbox from './components/Checkbox';
 import { SettingOptions } from './type';
-import Feedback from './components/Feedback';
-import { ChevronRightIcon } from './components/Icon';
-
-function replaceLast(x: string, y: string, z: string) {
-  var a = x.split('');
-  var length = y.length;
-  if (x.lastIndexOf(y) != -1) {
-    for (var i = x.lastIndexOf(y); i < x.lastIndexOf(y) + length; i++) {
-      if (i == x.lastIndexOf(y)) {
-        a[i] = z;
-      } else {
-        delete a[i];
-      }
-    }
-  }
-  return a.join('');
-}
-
-export function truncateUrl(url: string, maxLength = 50) {
-  if (url.length <= maxLength) return url;
-
-  const start = url.slice(0, Math.ceil(maxLength / 2) - 0); // Start portion
-  const end = url.slice(-30); // End portion
-  return `${start}...${end}`;
-}
+import Footer from './components/Footer';
+import {
+  ChevronRightIcon,
+  Clapper,
+  LoadingIcon,
+  Note,
+  Play,
+  Quiz,
+  Setting,
+} from './components/Icon';
+import GetShareableLink from './components/GetShareableLink';
 
 export default function App() {
-  const [url, setUrl] = useState('');
-  const [isCopied, setIsCopied] = useState(false);
   const [courseList, setCourseList] = useState<any>([]);
-  const [currentCourse, setCurrentCourse] = useState('');
+  const [currentCourse, setCurrentCourse] = useState('SSL101c');
   const [isHidden, setIsHidden] = useState(true);
   const [options, setOptions] = useState<SettingOptions>({
-    isAutoSubmitQuiz: false,
+    isAutoSubmitQuiz: true,
     isAutoGrade: false,
+    isAlwaysShowControlPanel: true,
   });
+  const [isVisible, setIsVisible] = useState(false);
   const [assignmentList, setAssignmentList] = useState<any>([]);
   const [isLoading, setIsLoading] = useState<any>({
     isLoadingReview: false,
@@ -54,42 +43,56 @@ export default function App() {
     isLoadingSubmitPeerGrading: false,
     isLoadingDiscuss: false,
     isLoadingCompleteWeek: false,
+    isLoadingDisableAI: false,
   });
 
   useEffect(() => {
     (async () => {
-      let courseList = await fetch('https://ecec123ecec.github.io/coursera-db/courseMap.json').then(
-        (res) => res.json(),
-      );
-      const { course } = await chrome.storage.local.get('course');
-      const { isAutoSubmitQuiz } = await chrome.storage.local.get('isAutoSubmitQuiz');
-      // console.log(isAutoSubmitQuiz);
+      let courseMap = await fetch('https://ecec123ecec.github.io/coursera-db/courseMap.json', {
+        cache: 'no-store',
+      }).then((res) => res.json());
+      // console.log(courseMap);
 
-      setCurrentCourse(course);
-      setCourseList(courseList);
-      setOptions({ isAutoSubmitQuiz: isAutoSubmitQuiz, isAutoGrade: false });
-      // await getMaterial();
-      // await handleAutoquiz();
+      const { course } = await chrome.storage.local.get('course');
+      let flag = false;
+      let courseCode = '';
+      Object.entries(courseMap).forEach(([key, value]: any) => {
+        value.related.forEach((item: string) => {
+          if (location.href.includes(item)) {
+            chrome.storage.local.set({ course: key });
+            setCurrentCourse(key);
+            courseCode = key;
+            flag = true;
+          }
+        });
+      });
+
+      const { isAutoSubmitQuiz } = await chrome.storage.local.get('isAutoSubmitQuiz');
+      const { isAlwaysShowControlPanel } = await chrome.storage.local.get(
+        'isAlwaysShowControlPanel',
+      );
+      // console.log(isAlwaysShowControlPanel);
+      // console.log(isAutoSubmitQuiz);
+      setCourseList(courseMap);
+      setOptions({
+        isAutoSubmitQuiz: isAutoSubmitQuiz,
+        isAutoGrade: false,
+        isAlwaysShowControlPanel:
+          isAlwaysShowControlPanel == undefined ? true : isAlwaysShowControlPanel,
+      });
+      let autoSubmit = isAutoSubmitQuiz == undefined ? true : isAutoSubmitQuiz;
+      if (
+        autoSubmit &&
+        (location.href.includes('/assignment-submission') ||
+          location.href.includes('/exam') ||
+          location.href.includes('/quiz'))
+      ) {
+        setIsLoading((prev: any) => ({ ...prev, isLoadingQuiz: true }));
+        await handleAutoquiz(courseCode);
+        setIsLoading((prev: any) => ({ ...prev, isLoadingQuiz: false }));
+      }
     })();
   }, []);
-
-  // useEffect(() => {
-  //   (async () => {
-  //     await resolveWeekMaterial();
-  //     if (location.href.includes('assignment-submission')) {
-  //       await handleAutoquiz();
-  //     } else if (location.href.includes('/peer/')) {
-  //       if (location.href.includes('/give-feedback') || location.href.includes('/review-next')) {
-  //         await handleReview();
-  //       } else {
-  //         await handlePeerGradedAssignment();
-  //       }
-  //     } else if (location.href.includes('/discussionPrompt/')) {
-  //       await handleDiscussionPrompt();
-  //       console.log('zo');
-  //     }
-  //   })();
-  // }, []);
 
   return (
     <>
@@ -102,8 +105,28 @@ export default function App() {
           zIndex: 1000,
         }}
       ></div>
+      {/* <div className="fixed top-4 right-4 bg-blue-400 text-white font-semibold p-4 text-xl">
+          <LoadingIcon />
+          Doing quiz...
+        </div> */}
+      {
+        <div
+          className={`transition-all fixed top-4 right-8 bg-blue-700 dark:bg-blue-600 font-bold text-white flex justify-center items-center gap-4 text-xl px-6 py-3 rounded-lg ${
+            isLoading.isLoadingQuiz ||
+            isLoading.isLoadingDiscuss ||
+            isLoading.isLoadingCompleteWeek ||
+            isLoading.isLoadingSubmitPeerGrading ||
+            isLoading.isLoadingReview
+              ? '-translate-y-0'
+              : '-translate-y-20'
+          }`}
+        >
+          <LoadingIcon size={30} />
+          Loading
+        </div>
+      }
       <div
-        className={`bg-white absolute border border-black bottom-2 p-4 right-0 w-[400px] rounded-md transition-all ${isHidden ? '-translate-x-0' : 'translate-x-[500px]'}`}
+        className={`bg-white absolute border border-black -bottom-4 p-4 w-[450px] right-0 rounded-md transition-all ${isHidden ? '-translate-x-0' : 'translate-x-[500px]'}`}
       >
         <div
           className="absolute top-2 right-2 cursor-pointer"
@@ -111,10 +134,13 @@ export default function App() {
         >
           <ChevronRightIcon />
         </div>
-
+        <div className="font-bold text-base mb-3 flex gap-2">
+          <Clapper />
+          Skipping
+        </div>
         <div className="flex gap-2">
           <Button
-            title="Auto do readings skip watching videos"
+            title="Auto skip all readings & videos"
             onClick={async () => {
               setIsLoading((prev: any) => ({ ...prev, isLoadingCompleteWeek: true }));
               await resolveWeekMaterial();
@@ -122,10 +148,10 @@ export default function App() {
             }}
             isLoading={isLoading.isLoadingCompleteWeek}
           >
-            Auto complete week
+            Skip videos & readings
           </Button>
           <Button
-            title="Auto do discussion prompt"
+            title="Auto do all discussion prompt"
             onClick={async () => {
               setIsLoading((prev: any) => ({ ...prev, isLoadingDiscuss: true }));
               await handleDiscussionPrompt();
@@ -133,11 +159,17 @@ export default function App() {
             }}
             isLoading={isLoading.isLoadingDiscuss}
           >
-            Auto discussion
+            Skip discussions
           </Button>
+        </div>
+
+        <div className="font-bold text-base my-3 flex gap-2">
+          <Note />
+          Assignment
         </div>
         <div className="flex gap-2 mt-2">
           <Button
+            title="Auto submit assignments (May not work)"
             onClick={async () => {
               setIsLoading((prev: any) => ({ ...prev, isLoadingSubmitPeerGrading: true }));
               await handlePeerGradedAssignment();
@@ -145,9 +177,10 @@ export default function App() {
             }}
             isLoading={isLoading.isLoadingSubmitPeerGrading}
           >
-            Auto submit assignment
+            Auto submit
           </Button>
           <Button
+            title="Auto grade assignments"
             onClick={async () => {
               setIsLoading((prev: any) => ({ ...prev, isLoadingReview: true }));
               await handleReview();
@@ -157,51 +190,25 @@ export default function App() {
           >
             Auto grade
           </Button>
-        </div>
-        <div className="flex gap-2 mt-2">
-          {/* {courseList[currentCourse]?.status === 'done' && ( */}
           <Button
+            title="Disable AI grading for your submission"
             onClick={async () => {
-              String.prototype.normalize = function () {
-                return this.replaceAll('\u00A0', '')
-                  .replace(/\s+/g, ' ')
-                  .replaceAll('\n', ' ')
-                  .trim();
-              };
-              setIsLoading((prev: any) => ({ ...prev, isLoadingQuiz: true }));
-              await handleAutoquiz();
-              setIsLoading((prev: any) => ({ ...prev, isLoadingQuiz: false }));
+              setIsLoading((prev: any) => ({ ...prev, isLoadingDisableAI: true }));
+              await requestGradingByPeer();
+              setIsLoading((prev: any) => ({ ...prev, isLoadingDisableAI: false }));
             }}
-            isLoading={isLoading.isLoadingQuiz}
+            isLoading={isLoading.isLoadingDisableAI}
           >
-            Auto quiz
+            Disable AI grading
           </Button>
-          {/* )} */}
         </div>
-        <div className="grid grid-cols-2 mt-3">
-          <Checkbox
-            id={'auto-submit-quiz'}
-            checked={options.isAutoSubmitQuiz}
-            children={'Auto submit quiz'}
-            onChange={(e: HTMLInputElement) => {
-              setOptions((prev) => {
-                chrome.storage.local.set({ isAutoSubmitQuiz: !prev.isAutoSubmitQuiz });
-                return { ...prev, isAutoSubmitQuiz: !prev.isAutoSubmitQuiz };
-              });
-              // console.log(options.isAutoSubmitQuiz);
-            }}
-          />
-          {/* <Checkbox
-            id={'auto-grade'}
-            checked={options.isAutoGrade}
-            children={'Auto grade'}
-            onChange={(e: HTMLInputElement) =>
-              setOptions((prev) => ({ ...prev, isAutoGrade: !prev.isAutoGrade }))
-            }
-          /> */}
+        <GetShareableLink />
+        <div className="font-bold text-base my-3 flex gap-2">
+          <Quiz />
+          Quiz Automation
         </div>
-        <div>
-          <span className="font-semibold mr-2">Source:</span>
+        <div className="flex gap-4 items-center">
+          <span className="font-semibold">Source:</span>
           <select
             className="py-1 px-3 border rounded-lg focus-visible:outline-none"
             onChange={(e) => {
@@ -216,8 +223,62 @@ export default function App() {
               </option>
             ))}
           </select>
+          <Button
+            title="Start auto quiz"
+            onClick={async () => {
+              String.prototype.normalize = function () {
+                return this.replaceAll('\u00A0', '')
+                  .replace(/\s+/g, ' ')
+                  .replaceAll('\n', ' ')
+                  .replaceAll('“', '"')
+                  .replaceAll('”', '"')
+                  .replaceAll('‘', "'")
+                  .replaceAll('’', "'")
+                  .replaceAll('–', '-')
+                  .trim();
+              };
+              // showToast();
+              setIsLoading((prev: any) => ({ ...prev, isLoadingQuiz: true }));
+              await handleAutoquiz(currentCourse);
+              setIsLoading((prev: any) => ({ ...prev, isLoadingQuiz: false }));
+            }}
+            isLoading={isLoading.isLoadingQuiz}
+            icon={<Play width={22} height={22} />}
+          >
+            Start
+          </Button>
         </div>
-        <Feedback />
+        <div className="font-bold text-base my-3 flex gap-2">
+          <Setting />
+          Setting
+        </div>
+        <div className="grid grid-cols-2 mt-3">
+          <Checkbox
+            id={'auto-submit-quiz'}
+            checked={options.isAutoSubmitQuiz}
+            children={'Auto submit quiz'}
+            onChange={(e: HTMLInputElement) => {
+              setOptions((prev) => {
+                chrome.storage.local.set({ isAutoSubmitQuiz: !prev.isAutoSubmitQuiz });
+                return { ...prev, isAutoSubmitQuiz: !prev.isAutoSubmitQuiz };
+              });
+            }}
+          />
+          <Checkbox
+            id={'always-show-ui'}
+            checked={options.isAlwaysShowControlPanel}
+            children={'Always show control panel'}
+            onChange={(e: HTMLInputElement) => {
+              setOptions((prev) => {
+                chrome.storage.local.set({
+                  isAlwaysShowControlPanel: !prev.isAlwaysShowControlPanel,
+                });
+                return { ...prev, isAlwaysShowControlPanel: !prev.isAlwaysShowControlPanel };
+              });
+            }}
+          />
+        </div>
+        <Footer />
       </div>
     </>
   );

@@ -1,9 +1,9 @@
 {
-  "name": "coursera-link",
+  "name": "coursera-tool",
   "displayName": "Coursera Tool",
-  "version": "1.0.1.3",
+  "version": "1.0.1.7",
   "author": "hehe",
-  "description": "Extension helps FPTers bypass videos, auto do quizzes, auto submit peer assignments, auto grade reviews, get shareable links, etc.",
+  "description": "Extension helps bypass videos & readings, auto do quizzes, auto submit assignments, auto grade reviews, get shareable links, etc.",
   "type": "module",
   "license": "MIT",
   "keywords": [

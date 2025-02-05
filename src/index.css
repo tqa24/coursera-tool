@@ -26,10 +26,10 @@
   }
 } */
 
-body {
+/* body {
   min-width: 28rem;
   margin: 0;
-}
+} */
 
 .rotate {
   animation: rotate 1s linear infinite;
@@ -41,5 +41,26 @@ body {
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+.toast {
+  transform: translateX(-50%);
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  font-size: 16px;
+  opacity: 0;
+  animation: fadeIn 0.5s forwards; /* Fade-in effect */
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px); /* Start slightly below */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0); /* End in normal position */
   }
 }

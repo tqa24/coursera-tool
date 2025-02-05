@@ -16,7 +16,7 @@ export default defineManifest({
     128: 'img/favicon-v2-194x194.png',
   },
   action: {
-    default_popup: 'popup.html',
+    // default_popup: 'popup.html',
     default_icon: 'img/favicon-v2-194x194.png',
   },
   background: {
@@ -25,10 +25,11 @@ export default defineManifest({
   },
   content_scripts: [
     {
-      matches: ['https://www.coursera.org/learn/*'],
+      matches: ['https://www.coursera.org/*'],
       js: ['src/contentScript/index.ts'],
     },
   ],
+  homepage_url: 'https://www.facebook.com/au.kien.thanh.2307',
   web_accessible_resources: [
     {
       resources: [

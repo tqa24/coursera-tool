@@ -12,4 +12,5 @@ export type Course = {
 export type SettingOptions = {
   isAutoSubmitQuiz: boolean;
   isAutoGrade: boolean;
+  isAlwaysShowControlPanel: boolean;
 };

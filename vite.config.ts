@@ -20,3 +20,10 @@ export default defineConfig(({ mode }) => {
     plugins: [crx({ manifest }), react()],
   };
 });
+// ‘zzzzz’
+// “zzzzz”
+// –
+// ‘
+// ’
+// “
+// ”
