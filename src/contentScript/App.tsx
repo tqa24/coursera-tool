@@ -13,37 +13,64 @@ import {
 } from './utils';
 import { Button } from './components/Button';
 import Checkbox from './components/Checkbox';
-import { SettingOptions } from './type';
+import { LoadingProps, SettingOptions } from './type';
 import Footer from './components/Footer';
 import {
   ChevronRightIcon,
   Clapper,
   LoadingIcon,
   Note,
+  Paintbrush,
   Play,
   Quiz,
   Setting,
 } from './components/Icon';
 import GetShareableLink from './components/GetShareableLink';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function App() {
   const [courseList, setCourseList] = useState<any>([]);
+
+  const methods = [
+    {
+      name: 'Source',
+      value: 'source',
+    },
+    {
+      name: 'ChatGPT',
+      value: 'chatgpt',
+    },
+    {
+      name: 'Gemini',
+      value: 'gemini',
+    },
+    {
+      name: 'DeepSeek',
+      value: 'deepseek',
+    },
+  ];
+
   const [currentCourse, setCurrentCourse] = useState('SSL101c');
-  const [isHidden, setIsHidden] = useState(true);
+  const [isShowControlPanel, setIsShowControlPanel] = useState(false);
   const [options, setOptions] = useState<SettingOptions>({
     isAutoSubmitQuiz: true,
-    isAutoGrade: false,
-    isAlwaysShowControlPanel: true,
+    isDebugMode: false,
   });
-  const [isVisible, setIsVisible] = useState(false);
-  const [assignmentList, setAssignmentList] = useState<any>([]);
-  const [isLoading, setIsLoading] = useState<any>({
+  const [isSetting, setIsSetting] = useState(false);
+  const [isLoading, setIsLoading] = useState<LoadingProps>({
     isLoadingReview: false,
     isLoadingQuiz: false,
     isLoadingSubmitPeerGrading: false,
     isLoadingDiscuss: false,
     isLoadingCompleteWeek: false,
     isLoadingDisableAI: false,
+  });
+  const [isAccordionOpen, setIsAccordionOpen] = useState(false);
+  const [apiKeys, setApiKeys] = useState<{ [key: string]: string }>({
+    sourceAPI: '',
+    chatgptAPI: '',
+    geminiAPI: '',
+    deepseekAPI: '',
   });
 
   useEffect(() => {
@@ -68,18 +95,16 @@ export default function App() {
       });
 
       const { isAutoSubmitQuiz } = await chrome.storage.local.get('isAutoSubmitQuiz');
-      const { isAlwaysShowControlPanel } = await chrome.storage.local.get(
-        'isAlwaysShowControlPanel',
-      );
-      // console.log(isAlwaysShowControlPanel);
+      const { isShowControlPanel } = await chrome.storage.local.get('isShowControlPanel');
+      const { isDebugMode } = await chrome.storage.local.get('isDebugMode');
+
       // console.log(isAutoSubmitQuiz);
       setCourseList(courseMap);
       setOptions({
         isAutoSubmitQuiz: isAutoSubmitQuiz,
-        isAutoGrade: false,
-        isAlwaysShowControlPanel:
-          isAlwaysShowControlPanel == undefined ? true : isAlwaysShowControlPanel,
+        isDebugMode: isDebugMode == undefined ? false : isDebugMode,
       });
+      setIsShowControlPanel(isShowControlPanel == undefined ? true : isShowControlPanel);
       let autoSubmit = isAutoSubmitQuiz == undefined ? true : isAutoSubmitQuiz;
       if (
         autoSubmit &&
@@ -94,68 +119,74 @@ export default function App() {
     })();
   }, []);
 
+  useEffect(() => {
+    const fetchApiKeys = async () => {
+      const keys = await chrome.storage.local.get([
+        'sourceAPI',
+        'chatgptAPI',
+        'geminiAPI',
+        'deepseekAPI',
+      ]);
+      setApiKeys(keys);
+    };
+
+    fetchApiKeys();
+  }, []);
+
   return (
     <>
       <div
-        className={`w-10 h-10 rounded-full fixed bottom-3 right-6 p-2 cursor-pointer bg-no-repeat bg-center bg-cover transition-all duration-300 ${!isHidden ? 'translate-y-0' : 'translate-y-[100px]'}`}
-        onClick={() => setIsHidden((pre) => !pre)}
+        className={`w-10 h-10 rounded-full fixed bottom-3 right-6 p-2 cursor-pointer bg-no-repeat bg-center bg-cover transition-all duration-300 ${!isShowControlPanel ? 'translate-y-0 opacity-100' : 'translate-y-[100px] opacity-0'}`}
+        onClick={() => {
+          setIsShowControlPanel(true);
+          chrome.storage.local.set({ isShowControlPanel: true });
+        }}
         style={{
           backgroundImage:
             'url(https://d3njjcbhbojbot.cloudfront.net/api/utilities/v1/imageproxy/https://coursera_assets.s3.amazonaws.com/images/71180874e10407031ecd7b62e27dec77.png?auto=format%2Ccompress&dpr=1&w=32&h=32)',
           zIndex: 1000,
         }}
       ></div>
-      {/* <div className="fixed top-4 right-4 bg-blue-400 text-white font-semibold p-4 text-xl">
-          <LoadingIcon />
-          Doing quiz...
-        </div> */}
-      {
-        <div
-          className={`transition-all fixed top-4 right-8 bg-blue-700 dark:bg-blue-600 font-bold text-white flex justify-center items-center gap-4 text-xl px-6 py-3 rounded-lg ${
-            isLoading.isLoadingQuiz ||
-            isLoading.isLoadingDiscuss ||
-            isLoading.isLoadingCompleteWeek ||
-            isLoading.isLoadingSubmitPeerGrading ||
-            isLoading.isLoadingReview
-              ? '-translate-y-0'
-              : '-translate-y-20'
-          }`}
-        >
-          <LoadingIcon size={30} />
-          Loading
-        </div>
-      }
+
       <div
-        className={`bg-white absolute border border-black -bottom-4 p-4 w-[450px] right-0 rounded-md transition-all ${isHidden ? '-translate-x-0' : 'translate-x-[500px]'}`}
+        className={`bg-white absolute border border-black -bottom-4 p-4 right-0 rounded-md transition-all ${isShowControlPanel ? '-translate-x-0 opacity-100' : 'translate-x-[500px] opacity-0'}`}
       >
         <div
           className="absolute top-2 right-2 cursor-pointer"
-          onClick={() => setIsHidden((prev) => !prev)}
+          onClick={() => {
+            setIsShowControlPanel(false);
+            chrome.storage.local.set({ isShowControlPanel: false });
+          }}
         >
           <ChevronRightIcon />
         </div>
-        <div className="font-bold text-base mb-3 flex gap-2">
-          <Clapper />
-          Skipping
+        <div className="font-bold text-sm mb-3 flex gap-2">
+          <Clapper width={20} height={20} />
+          Course Progress
         </div>
         <div className="flex gap-2">
           <Button
+            icon={<Paintbrush />}
+            className=""
             title="Auto skip all readings & videos"
             onClick={async () => {
-              setIsLoading((prev: any) => ({ ...prev, isLoadingCompleteWeek: true }));
+              setIsLoading((prev: LoadingProps) => ({ ...prev, isLoadingCompleteWeek: true }));
               await resolveWeekMaterial();
-              setIsLoading((prev: any) => ({ ...prev, isLoadingCompleteWeek: false }));
+              setIsLoading((prev: LoadingProps) => ({ ...prev, isLoadingCompleteWeek: false }));
+              location.reload();
             }}
             isLoading={isLoading.isLoadingCompleteWeek}
           >
             Skip videos & readings
           </Button>
           <Button
-            title="Auto do all discussion prompt"
+            className=""
+            title="Auto skip all readings & videos"
             onClick={async () => {
-              setIsLoading((prev: any) => ({ ...prev, isLoadingDiscuss: true }));
+              setIsLoading((prev: LoadingProps) => ({ ...prev, isLoadingDiscuss: true }));
               await handleDiscussionPrompt();
-              setIsLoading((prev: any) => ({ ...prev, isLoadingDiscuss: false }));
+              setIsLoading((prev: LoadingProps) => ({ ...prev, isLoadingDiscuss: false }));
+              location.reload();
             }}
             isLoading={isLoading.isLoadingDiscuss}
           >
@@ -163,17 +194,20 @@ export default function App() {
           </Button>
         </div>
 
-        <div className="font-bold text-base my-3 flex gap-2">
-          <Note />
+        <div className="font-bold my-3 flex gap-2 text-sm">
+          <Note width={20} height={20} />
           Assignment
         </div>
         <div className="flex gap-2 mt-2">
           <Button
             title="Auto submit assignments (May not work)"
             onClick={async () => {
-              setIsLoading((prev: any) => ({ ...prev, isLoadingSubmitPeerGrading: true }));
+              setIsLoading((prev: LoadingProps) => ({ ...prev, isLoadingSubmitPeerGrading: true }));
               await handlePeerGradedAssignment();
-              setIsLoading((prev: any) => ({ ...prev, isLoadingSubmitPeerGrading: false }));
+              setIsLoading((prev: LoadingProps) => ({
+                ...prev,
+                isLoadingSubmitPeerGrading: false,
+              }));
             }}
             isLoading={isLoading.isLoadingSubmitPeerGrading}
           >
@@ -182,9 +216,18 @@ export default function App() {
           <Button
             title="Auto grade assignments"
             onClick={async () => {
-              setIsLoading((prev: any) => ({ ...prev, isLoadingReview: true }));
-              await handleReview();
-              setIsLoading((prev: any) => ({ ...prev, isLoadingReview: false }));
+              setIsLoading((prev: LoadingProps) => ({ ...prev, isLoadingReview: true }));
+              toast.promise(
+                async () => {
+                  await handleReview();
+                },
+                {
+                  loading: 'Grading ...',
+                  success: <p>Grading done!</p>,
+                  error: <p>Grading failed!</p>,
+                },
+              );
+              setIsLoading((prev: LoadingProps) => ({ ...prev, isLoadingReview: false }));
             }}
             isLoading={isLoading.isLoadingReview}
           >
@@ -193,9 +236,9 @@ export default function App() {
           <Button
             title="Disable AI grading for your submission"
             onClick={async () => {
-              setIsLoading((prev: any) => ({ ...prev, isLoadingDisableAI: true }));
+              setIsLoading((prev: LoadingProps) => ({ ...prev, isLoadingDisableAI: true }));
               await requestGradingByPeer();
-              setIsLoading((prev: any) => ({ ...prev, isLoadingDisableAI: false }));
+              setIsLoading((prev: LoadingProps) => ({ ...prev, isLoadingDisableAI: false }));
             }}
             isLoading={isLoading.isLoadingDisableAI}
           >
@@ -203,14 +246,14 @@ export default function App() {
           </Button>
         </div>
         <GetShareableLink />
-        <div className="font-bold text-base my-3 flex gap-2">
-          <Quiz />
+        <div className="font-bold text-sm my-3 flex gap-2">
+          <Quiz width={20} height={20} />
           Quiz Automation
         </div>
-        <div className="flex gap-4 items-center">
+        <div className="flex gap-4 items-center w-full text-sm">
           <span className="font-semibold">Source:</span>
           <select
-            className="py-1 px-3 border rounded-lg focus-visible:outline-none"
+            className="py-1 px-3 border rounded-lg focus-visible:outline-none text-sm"
             onChange={(e) => {
               chrome.storage.local.set({ course: e.target.value });
               setCurrentCourse(e.target.value);
@@ -224,6 +267,7 @@ export default function App() {
             ))}
           </select>
           <Button
+            className="!py-1"
             title="Start auto quiz"
             onClick={async () => {
               String.prototype.normalize = function () {
@@ -235,12 +279,11 @@ export default function App() {
                   .replaceAll('‘', "'")
                   .replaceAll('’', "'")
                   .replaceAll('–', '-')
+                  .replaceAll('—', '-')
+                  .replaceAll('…', '...')
                   .trim();
               };
-              // showToast();
-              setIsLoading((prev: any) => ({ ...prev, isLoadingQuiz: true }));
               await handleAutoquiz(currentCourse);
-              setIsLoading((prev: any) => ({ ...prev, isLoadingQuiz: false }));
             }}
             isLoading={isLoading.isLoadingQuiz}
             icon={<Play width={22} height={22} />}
@@ -248,38 +291,89 @@ export default function App() {
             Start
           </Button>
         </div>
-        <div className="font-bold text-base my-3 flex gap-2">
-          <Setting />
-          Setting
+
+        <div className="grid grid-cols-1 text-sm">
+          <div
+            className="font-bold text-sm my-3 flex gap-2 cursor-pointer"
+            onClick={() => setIsAccordionOpen(!isAccordionOpen)}
+          >
+            <Setting width={20} height={20} />
+            Settings
+          </div>
+
+          {isAccordionOpen && (
+            <div className="col-span-2">
+              <div className="grid grid-cols-2 gap-2">
+                <span className="flex items-center gap-2">
+                  <span className="text-sm">Method: </span>
+                  <select
+                    className="py-1 px-3 border rounded-lg focus-visible:outline-none text-sm"
+                    onChange={(e) => {
+                      chrome.storage.local.set({ method: e.target.value });
+                    }}
+                  >
+                    {methods.map((value) => (
+                      <option key={value.value} value={value.value}>
+                        {value.name}
+                      </option>
+                    ))}
+                  </select>
+                </span>
+                <Checkbox
+                  id={'auto-submit-quiz'}
+                  checked={options.isAutoSubmitQuiz}
+                  children={'Auto submit quiz'}
+                  onChange={(e: HTMLInputElement) => {
+                    setOptions((prev) => {
+                      chrome.storage.local.set({ isAutoSubmitQuiz: !prev.isAutoSubmitQuiz });
+                      return { ...prev, isAutoSubmitQuiz: !prev.isAutoSubmitQuiz };
+                    });
+                  }}
+                />
+              </div>
+
+              {location.href.includes('debug=true') && (
+                <Checkbox
+                  id={'is-debug-mode'}
+                  checked={options.isDebugMode}
+                  children={'Debug mode'}
+                  onChange={(e: HTMLInputElement) => {
+                    setOptions((prev) => {
+                      chrome.storage.local.set({ isDebugMode: !prev.isDebugMode });
+                      return { ...prev, isDebugMode: !prev.isDebugMode };
+                    });
+                  }}
+                />
+              )}
+              {methods.slice(1).map((method) => (
+                <div className="mt-3" key={method.value}>
+                  <label htmlFor={`${method.value}-api`} className="mb-1 text-sm">
+                    {method.name} API:
+                  </label>
+                  <input
+                    id={`${method.value}-api`}
+                    type="text"
+                    className="border rounded-lg p-2 w-full"
+                    placeholder={`Enter ${method.name} API`}
+                    value={apiKeys[`${method.value}API`] || ''}
+                    onChange={(e) => {
+                      chrome.storage.local.set({ [`${method.value}API`]: e.target.value });
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-        <div className="grid grid-cols-2 mt-3">
-          <Checkbox
-            id={'auto-submit-quiz'}
-            checked={options.isAutoSubmitQuiz}
-            children={'Auto submit quiz'}
-            onChange={(e: HTMLInputElement) => {
-              setOptions((prev) => {
-                chrome.storage.local.set({ isAutoSubmitQuiz: !prev.isAutoSubmitQuiz });
-                return { ...prev, isAutoSubmitQuiz: !prev.isAutoSubmitQuiz };
-              });
-            }}
-          />
-          <Checkbox
-            id={'always-show-ui'}
-            checked={options.isAlwaysShowControlPanel}
-            children={'Always show control panel'}
-            onChange={(e: HTMLInputElement) => {
-              setOptions((prev) => {
-                chrome.storage.local.set({
-                  isAlwaysShowControlPanel: !prev.isAlwaysShowControlPanel,
-                });
-                return { ...prev, isAlwaysShowControlPanel: !prev.isAlwaysShowControlPanel };
-              });
-            }}
-          />
-        </div>
+
         <Footer />
       </div>
+
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+        toastOptions={{ success: { duration: 4000 } }}
+      />
     </>
   );
 }

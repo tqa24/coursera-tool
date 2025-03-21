@@ -41,6 +41,6 @@ export default defineManifest({
       matches: [],
     },
   ],
-  permissions: ['scripting', 'activeTab', 'tabs', 'storage', 'cookies'],
+  permissions: ['storage', 'cookies'],
   host_permissions: ['https://www.coursera.org/*', 'https://generativelanguage.googleapis.com/*'],
 });

@@ -11,6 +11,21 @@ export type Course = {
 
 export type SettingOptions = {
   isAutoSubmitQuiz: boolean;
-  isAutoGrade: boolean;
-  isAlwaysShowControlPanel: boolean;
+  isDebugMode: boolean;
 };
+
+export type LoadingProps = {
+  isLoadingReview: boolean;
+  isLoadingQuiz: boolean;
+  isLoadingSubmitPeerGrading: boolean;
+  isLoadingDiscuss: boolean;
+  isLoadingCompleteWeek: boolean;
+  isLoadingDisableAI: boolean;
+};
+
+export enum Method {
+  ChatGPT = 'chatgpt',
+  Gemini = 'gemini',
+  DeepSeek = 'deepseek',
+  Source = 'source',
+}

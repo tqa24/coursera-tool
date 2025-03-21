@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { LoadingIcon } from './Icon';
-import { getMaterial } from '../utils';
+import { getMaterial, getMetadata } from '../utils';
 
 export default function GetShareableLink() {
   const [url, setUrl] = React.useState("Your submission's url here");
@@ -25,9 +25,7 @@ export default function GetShareableLink() {
     const text = (document.querySelector('body > script:nth-child(3)') as any)?.innerText;
     const matchId1 = text.match(/(\d+~[A-Za-z0-9-_]+)/);
     const userId = matchId1?.[1].split('~')[0];
-    const metadata = JSON.parse(
-      document.querySelector('.m-a-0.body > a')?.getAttribute('data-click-value') ?? '',
-    );
+    const metadata = getMetadata();
     const submissionId = await fetch(
       `https://www.coursera.org/api/onDemandPeerAssignmentPermissions.v1/${userId}~${metadata.course_id}~${metadata.item_id}/?fields=deleteSubmission%2ClistSubmissions%2CreviewPeers%2CviewReviewSchema%2CanonymousPeerReview%2ConDemandPeerSubmissionProgresses.v1(latestSubmissionSummary%2ClatestDraftSummary%2ClatestAttemptSummary)%2ConDemandPeerReceivedReviewProgresses.v1(evaluationIfReady%2CearliestCompletionTime%2CreviewCount%2CdefaultReceivedReviewRequiredCount)%2ConDemandPeerDisplayablePhaseSchedules.v1(currentPhase%2CphaseEnds%2CphaseStarts)&includes=receivedReviewsProgress%2CsubmissionProgress%2CphaseSchedule`,
     )
@@ -51,9 +49,9 @@ export default function GetShareableLink() {
   };
 
   return (
-    <div className="flex items-center mt-3">
+    <div className="flex items-center mt-3 text-sm">
       <span
-        className="flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-white border border-blue-500 rounded-s-lg hover:bg-blue-700 hover:border-blue-700 bg-blue-600 cursor-pointer"
+        className="flex-shrink-0 z-10 inline-flex items-center py-2 px-3 font-medium text-center text-white border border-blue-500 rounded-s-lg hover:bg-blue-700 hover:border-blue-700 bg-blue-600 cursor-pointer"
         onClick={async () => {
           setIsLoading(true);
           await getLink();
@@ -67,7 +65,7 @@ export default function GetShareableLink() {
           id="website-url"
           type="text"
           aria-describedby="helper-text-explanation"
-          className="bg-gray-50 border border-e-0 !text-black border-gray-300 text-sm border-s-0 focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+          className="bg-gray-50 border border-e-0 !text-black border-gray-300 border-s-0 focus:ring-blue-500 focus:border-blue-500 block w-full p-2"
           value={url}
           readOnly
           disabled
@@ -76,7 +74,7 @@ export default function GetShareableLink() {
       <button
         data-tooltip-target="tooltip-website-url"
         data-copy-to-clipboard-target="website-url"
-        className="flex-shrink-0 z-10 inline-flex items-center py-3 px-4 text-sm font-medium text-center text-white bg-blue-700 rounded-e-lg hover:bg-blue-800 focus:ring-0 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 border border-blue-700 dark:border-blue-600 hover:border-blue-800 dark:hover:border-blue-700"
+        className="flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-white bg-blue-700 rounded-e-lg hover:bg-blue-800 focus:ring-0 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 border border-blue-700 dark:border-blue-600 hover:border-blue-800 dark:hover:border-blue-700"
         type="button"
         onClick={handleCopy}
       >

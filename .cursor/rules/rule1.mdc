@@ -1,0 +1,9 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+- Dont modify my string normalize function
+- Dont modify any string inside the replaceAll functions
+- Styling with tailwindcss

@@ -1,7 +1,7 @@
 {
   "name": "coursera-tool",
   "displayName": "Coursera Tool",
-  "version": "1.0.1.7",
+  "version": "1.0.1.9",
   "author": "hehe",
   "description": "Extension helps bypass videos & readings, auto do quizzes, auto submit assignments, auto grade reviews, get shareable links, etc.",
   "type": "module",
@@ -25,7 +25,8 @@
   "dependencies": {
     "cheerio": "^1.0.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.5.1"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.19",

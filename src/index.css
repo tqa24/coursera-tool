@@ -64,3 +64,22 @@
     transform: translateY(0); /* End in normal position */
   }
 }
+
+progress {
+  border-radius: 7px;
+  width: 80%;
+  height: 12px;
+  border: 1px solid rgb(0, 0, 0);
+}
+progress::-webkit-progress-bar {
+  background-color: #ffffffd5;
+  border-radius: 7px;
+}
+progress::-webkit-progress-value {
+  background-color: rgb(11, 122, 248);
+  border-radius: 20px;
+  /* box-shadow: 1px 1px 5px 3px rgba(255, 0, 0, 0.8); */
+}
+progress::-moz-progress-bar {
+  /* style rules */
+}
