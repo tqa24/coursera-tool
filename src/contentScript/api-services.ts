@@ -1,6 +1,7 @@
-import { QuizItem, Method } from './type';
-import { normalize } from './helpers';
-import { addBadgeToLabel } from './dom-utils';
+import { QuizItem, Method, Course } from './type';
+import { extendStringPrototype, normalize } from './helpers';
+import { addBadgeToLabel, collectUnmatchedQuestion } from './dom-utils';
+import { instructionPrompt } from './constants';
 
 /**
  * Extract question data from DOM elements
@@ -67,12 +68,12 @@ export const processAnswers = (
 };
 
 /**
- * Process questions using Gemini API
+ * Process questions using ChatGPT API
  */
-export const doWithGemini = async (questions: NodeListOf<Element>, method: string) => {
-  const { geminiAPI } = await chrome.storage.local.get('geminiAPI');
-  if (!location.href.includes('assignment-submission') || !geminiAPI) {
-    console.log('Not on assignment page or Gemini API key not found');
+export const doWithChatGPT = async (questions: NodeListOf<Element>, method: string) => {
+  const { chatgptAPI } = await chrome.storage.local.get('chatgptAPI');
+  if (!location.href.includes('assignment-submission') || !chatgptAPI) {
+    console.log('Not on assignment page or GPT API key not found');
     return;
   }
   console.log('Processing with Gemini');
@@ -86,16 +87,64 @@ export const doWithGemini = async (questions: NodeListOf<Element>, method: strin
 
   // API request body
   const body = {
-    system_instruction: {
-      parts: {
-        text: `You are given a json, answer this json by choosing the answer from the term which were divided by the | symbol and fill that to this json but with definition field filled, give me the new json with the term attribute removed, im only need the definition attribute. The answer in definition field must be a string included in the term field, just give the answer, doesn't need to explain it, if the question has more than 1 answer, give the answer join by \" | \" `,
-      },
-    },
-    contents: [
-      {
-        parts: [{ text: prompt }],
-      },
+    model: 'gpt-4o',
+    messages: [
+      { role: 'system', content: instructionPrompt },
+      { role: 'user', content: prompt },
     ],
+  };
+
+  try {
+    // Make API request
+    const response = await fetch(`https://api.openai.com/v1/chat/completions`, {
+      body: JSON.stringify(body),
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${chatgptAPI}` },
+    });
+
+    const data = await response.json();
+    const text = data?.choices?.[0]?.message?.content;
+
+    if (!text) {
+      console.error('No response from Gemini API');
+      return;
+    }
+
+    // Parse the response
+    const cleanText = text.replace('```json', '').replace('```', '');
+    const answers: QuizItem[] = JSON.parse(cleanText);
+    console.log('Gemini answers:', answers);
+
+    // Process answers
+    const correctCount = processAnswers(questions, answers, method, 'Gemini');
+    console.log(`Gemini found answers for ${correctCount}/${questions.length} questions`);
+  } catch (error) {
+    console.error('Error processing with Gemini:', error);
+  }
+};
+
+/**
+ * Process questions using Gemini API
+ */
+export const doWithGemini = async (questions: NodeListOf<Element>, method: string) => {
+  const { geminiAPI } = await chrome.storage.local.get('geminiAPI');
+  if (!geminiAPI && Method.Gemini == method) {
+    alert(
+      'Gemini API key not found, see the tutorial video to get one: https://www.youtube.com/watch?v=OVnnVnLZPEo and put it in the extension settings',
+    );
+    return;
+  }
+
+  // Extract question data
+  const questionData = extractQuestionData(questions);
+
+  // Prepare the prompt
+  const prompt = JSON.stringify(questionData.map((q) => ({ term: q.term, definition: '' })));
+
+  // API request body
+  const body = {
+    system_instruction: { parts: { text: instructionPrompt } },
+    contents: [{ parts: [{ text: prompt }] }],
   };
 
   try {
@@ -108,6 +157,12 @@ export const doWithGemini = async (questions: NodeListOf<Element>, method: strin
         headers: { 'Content-Type': 'application/json' },
       },
     );
+    if (!response.ok && method == Method.Gemini) {
+      alert(
+        'Wrong Gemini API key, see the tutorial video to get one: https://www.youtube.com/watch?v=OVnnVnLZPEo and put it in the extension settings',
+      );
+      return;
+    }
 
     const data = await response.json();
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -134,16 +189,15 @@ export const doWithGemini = async (questions: NodeListOf<Element>, method: strin
  * Process questions using DeepSeek API
  */
 export const doWithDeepSeek = async (questions: NodeListOf<Element>, method: string) => {
+  try {
+  } catch (error) {}
   const { deepseekAPI } = await chrome.storage.local.get('deepseekAPI');
   if (!location.href.includes('assignment-submission') || !deepseekAPI) {
-    console.log('Not on assignment page or DeepSeek API key not found');
     return;
   }
-  console.log('Processing with DeepSeek');
 
   // Extract question data
   const questionData = extractQuestionData(questions);
-  console.log('Extracted question data for DeepSeek');
 
   // Prepare the prompt
   const prompt = JSON.stringify(questionData.map((q) => ({ term: q.term, definition: '' })));
@@ -151,30 +205,21 @@ export const doWithDeepSeek = async (questions: NodeListOf<Element>, method: str
   // API request body
   const body = {
     model: 'deepseek/deepseek-r1-zero:free',
-    messages: [
-      {
-        role: 'user',
-        content:
-          prompt +
-          ' You are given a JSON, answer this JSON by choosing the answer from the term which were divided by the | symbol and fill that to this JSON but with the definition field filled. Give me only the JSON response, and do not modify the term attribute. The answer in the definition field must be a string included in the term field. If multiple answers exist, separate them with " | ".',
-      },
-    ],
+    messages: [{ role: 'user', content: prompt + instructionPrompt }],
     stream: false,
   };
 
   try {
     // Make API request
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const answerData = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       body: JSON.stringify(body),
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${deepseekAPI}`,
-      },
-    });
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${deepseekAPI}` },
+    }).then((res) => res.json());
 
-    const data = await response.json();
-    const text = data?.choices?.[0]?.message?.content;
+    let text = answerData?.choices?.[0]?.message?.content;
+    text = text.replace(/^\\boxed{\n?|\n?}$/g, '');
+    console.log('DeepSeek response:', text);
 
     if (!text) {
       console.error('No response from DeepSeek API');
@@ -191,5 +236,117 @@ export const doWithDeepSeek = async (questions: NodeListOf<Element>, method: str
     console.log(`DeepSeek found answers for ${correctCount}/${questions.length} questions`);
   } catch (error) {
     console.error('Error processing with DeepSeek:', error);
+  }
+};
+
+/**
+ * Process quiz questions using source material
+ * @param questions The list of quiz questions
+ * @param course The course data
+ * @param method The processing method
+ */
+export const doWithSource = async (
+  questions: NodeListOf<Element>,
+  course: Course,
+  method: string,
+) => {
+  if (!location.href.includes('assignment-submission')) {
+    return;
+  }
+
+  const { isDebugMode } = await chrome.storage.local.get('isDebugMode');
+
+  // Ensure normalize is available
+  extendStringPrototype();
+
+  // Questions without matching answers in source
+  let unmatched: any[] = [];
+
+  // Process each question
+  questions.forEach((question: any, i: number) => {
+    const questionChild = question.querySelector('.css-x3q7o9 > div:nth-child(2), .rc-CML');
+    if (!questionChild) {
+      if (isDebugMode) console.log('Question child not found for question', i);
+      return;
+    }
+
+    const text = questionChild.textContent?.normalize() ?? '';
+
+    // Find matching questions in the source database
+    const matchingQuestions =
+      course?.quizSrc?.filter(
+        (item) =>
+          item.term.toLowerCase().includes(text.toLowerCase()) ||
+          text.toLowerCase().includes(item.term.toLowerCase()),
+      ) || [];
+
+    if (matchingQuestions.length > 0) {
+      // Process questions with matches in the source
+      let answered = false;
+
+      matchingQuestions.forEach((matchedQuestion) => {
+        const options = question.querySelectorAll('.rc-Option');
+
+        if (options.length > 0) {
+          // Multiple choice question
+          for (const option of options) {
+            const optionText =
+              option?.querySelector('span:nth-child(3)')?.textContent?.normalize() ?? '';
+
+            if (matchedQuestion.definition.toLowerCase().includes(optionText.toLowerCase())) {
+              answered = true;
+              const input = option.querySelector('input');
+
+              if (input) {
+                if (isDebugMode) console.log('Found matching option:', optionText);
+
+                method === Method.Source && input.click();
+                addBadgeToLabel(input, 'Source FPT');
+              }
+            }
+          }
+        } else {
+          // Text input question
+          try {
+            const inputElement = question.querySelector(
+              'input[type="text"], textarea, input[type="number"]',
+            );
+
+            if (inputElement) {
+              answered = true;
+              inputElement.click();
+              inputElement.value = matchedQuestion.definition;
+              inputElement.dispatchEvent(new Event('change', { bubbles: true }));
+
+              if (isDebugMode) console.log('Filled text input with:', matchedQuestion.definition);
+            }
+          } catch (error) {
+            console.error('Error filling text input:', error);
+          }
+        }
+      });
+
+      if (!answered) {
+        if (isDebugMode) console.log('No matching answer found for question', i);
+
+        // No matching answers found, try to select first option
+        const input = question.querySelector('input, textarea');
+        if (input) {
+          method === Method.Source && input.click();
+        }
+
+        // Add to unmatched list
+        collectUnmatchedQuestion(question, unmatched, method as Method);
+      }
+    } else {
+      // No matching questions in source, collect for AI processing
+      if (isDebugMode) console.log('No matching question found in source for:', text);
+      collectUnmatchedQuestion(question, unmatched, method as Method);
+    }
+  });
+
+  // Log unmatched questions for debugging
+  if (unmatched.length > 0 && isDebugMode) {
+    console.log(`${unmatched.length} questions not found in source:`, unmatched);
   }
 };

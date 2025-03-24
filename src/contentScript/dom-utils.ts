@@ -1,4 +1,5 @@
 import { generateRandomString } from './helpers';
+import { Method } from './type';
 
 /**
  * Adds a badge to the label parent of an input element
@@ -91,7 +92,11 @@ export const appendNotSupported = async () => {
 /**
  * Helper to collect unmatched questions
  */
-export const collectUnmatchedQuestion = (question: Element, unmatched: any[]) => {
+export const collectUnmatchedQuestion = async (
+  question: Element,
+  unmatched: any[],
+  method: Method,
+) => {
   const questionChild = question.querySelector('.css-x3q7o9 > div:nth-child(2), .rc-CML');
   const text = questionChild?.textContent?.normalize() ?? '';
   const options = question.querySelectorAll('.rc-Option');
@@ -108,7 +113,7 @@ export const collectUnmatchedQuestion = (question: Element, unmatched: any[]) =>
   if (inputs.length > 0) {
     try {
       const input = inputs[0] as HTMLInputElement | HTMLTextAreaElement;
-      input.click();
+      method === Method.Source && input.click();
 
       if (input instanceof HTMLInputElement) {
         if (input.type === 'text' || input.type === 'textarea') {

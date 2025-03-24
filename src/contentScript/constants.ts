@@ -1,3 +1,5 @@
+export const courseraLogo =
+  'https://d3njjcbhbojbot.cloudfront.net/api/utilities/v1/imageproxy/https://coursera_assets.s3.amazonaws.com/images/71180874e10407031ecd7b62e27dec77.png?auto=format%2Ccompress&dpr=1&w=32&h=32';
 export const wordList = [
   'apple',
   'banana',
@@ -411,3 +413,6 @@ export const wordList = [
   'youth',
   'zoology',
 ];
+
+export const instructionPrompt =
+  ' You are given a json, answer this json by choosing the answer from the term which were divided by the | symbol and fill that to this json but with definition field filled, give me the new json with the term attribute removed, im only need the definition attribute. The answer in definition field must be a string included in the term field, just give the answer, doesn\'t need to explain it, if the question has more than 1 answer, give the answer join by " | " ';

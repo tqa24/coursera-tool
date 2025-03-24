@@ -10,9 +10,11 @@ import {
   handleReview,
   requestGradingByPeer,
   resolveWeekMaterial,
+  getMaterial,
+  getAllMaterials,
+  getMetadata,
 } from './assignment-handlers';
-import { doWithGemini, doWithDeepSeek } from './api-services';
-import { doWithSource } from './quiz-processor';
+import { doWithGemini, doWithDeepSeek, doWithSource } from './api-services';
 import { addBadgeToLabel, appendNotSupported, collectUnmatchedQuestion } from './dom-utils';
 
 console.info('contentScript is running');
@@ -54,12 +56,13 @@ export {
   handleReview,
   requestGradingByPeer,
   resolveWeekMaterial,
-
-  // API Services
-  doWithGemini,
-  doWithDeepSeek,
+  getMaterial,
+  getAllMaterials,
+  getMetadata,
 
   // Quiz Processor
+  doWithGemini,
+  doWithDeepSeek,
   doWithSource,
 
   // DOM Utilities

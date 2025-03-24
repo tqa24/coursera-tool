@@ -5,15 +5,15 @@ import {
   handleReview,
   handlePeerGradedAssignment,
   handleDiscussionPrompt,
-  getMaterial,
   requestGradingByPeer,
   waitForSelector,
-  getAllMaterials,
   resolveWeekMaterial,
-} from './utils';
+  getMaterial,
+  getAllMaterials,
+} from './index';
 import { Button } from './components/Button';
 import Checkbox from './components/Checkbox';
-import { LoadingProps, SettingOptions } from './type';
+import { LoadingProps, Method, SettingOptions } from './type';
 import Footer from './components/Footer';
 import {
   ChevronRightIcon,
@@ -27,27 +27,28 @@ import {
 } from './components/Icon';
 import GetShareableLink from './components/GetShareableLink';
 import toast, { Toaster } from 'react-hot-toast';
+import { courseraLogo } from './constants';
 
 export default function App() {
   const [courseList, setCourseList] = useState<any>([]);
 
   const methods = [
     {
-      name: 'Source',
+      name: 'Source FPT',
       value: 'source',
-    },
-    {
-      name: 'ChatGPT',
-      value: 'chatgpt',
     },
     {
       name: 'Gemini',
       value: 'gemini',
     },
-    {
-      name: 'DeepSeek',
-      value: 'deepseek',
-    },
+    // {
+    //   name: 'ChatGPT',
+    //   value: 'chatgpt',
+    // },
+    // {
+    //   name: 'DeepSeek',
+    //   value: 'deepseek',
+    // },
   ];
 
   const [currentCourse, setCurrentCourse] = useState('SSL101c');
@@ -55,8 +56,8 @@ export default function App() {
   const [options, setOptions] = useState<SettingOptions>({
     isAutoSubmitQuiz: true,
     isDebugMode: false,
+    method: Method.Source,
   });
-  const [isSetting, setIsSetting] = useState(false);
   const [isLoading, setIsLoading] = useState<LoadingProps>({
     isLoadingReview: false,
     isLoadingQuiz: false,
@@ -65,7 +66,6 @@ export default function App() {
     isLoadingCompleteWeek: false,
     isLoadingDisableAI: false,
   });
-  const [isAccordionOpen, setIsAccordionOpen] = useState(false);
   const [apiKeys, setApiKeys] = useState<{ [key: string]: string }>({
     sourceAPI: '',
     chatgptAPI: '',
@@ -97,12 +97,14 @@ export default function App() {
       const { isAutoSubmitQuiz } = await chrome.storage.local.get('isAutoSubmitQuiz');
       const { isShowControlPanel } = await chrome.storage.local.get('isShowControlPanel');
       const { isDebugMode } = await chrome.storage.local.get('isDebugMode');
+      const { method } = await chrome.storage.local.get('method');
 
       // console.log(isAutoSubmitQuiz);
       setCourseList(courseMap);
       setOptions({
         isAutoSubmitQuiz: isAutoSubmitQuiz,
         isDebugMode: isDebugMode == undefined ? false : isDebugMode,
+        method: method == undefined ? Method.Source : method,
       });
       setIsShowControlPanel(isShowControlPanel == undefined ? true : isShowControlPanel);
       let autoSubmit = isAutoSubmitQuiz == undefined ? true : isAutoSubmitQuiz;
@@ -142,8 +144,7 @@ export default function App() {
           chrome.storage.local.set({ isShowControlPanel: true });
         }}
         style={{
-          backgroundImage:
-            'url(https://d3njjcbhbojbot.cloudfront.net/api/utilities/v1/imageproxy/https://coursera_assets.s3.amazonaws.com/images/71180874e10407031ecd7b62e27dec77.png?auto=format%2Ccompress&dpr=1&w=32&h=32)',
+          backgroundImage: `url(${courseraLogo})`,
           zIndex: 1000,
         }}
       ></div>
@@ -253,7 +254,7 @@ export default function App() {
         <div className="flex gap-4 items-center w-full text-sm">
           <span className="font-semibold">Source:</span>
           <select
-            className="py-1 px-3 border rounded-lg focus-visible:outline-none text-sm"
+            className="py-1 px-3 border rounded-lg focus-visible:outline-none text-sm border-zinc-500"
             onChange={(e) => {
               chrome.storage.local.set({ course: e.target.value });
               setCurrentCourse(e.target.value);
@@ -269,22 +270,7 @@ export default function App() {
           <Button
             className="!py-1"
             title="Start auto quiz"
-            onClick={async () => {
-              String.prototype.normalize = function () {
-                return this.replaceAll('\u00A0', '')
-                  .replace(/\s+/g, ' ')
-                  .replaceAll('\n', ' ')
-                  .replaceAll('“', '"')
-                  .replaceAll('”', '"')
-                  .replaceAll('‘', "'")
-                  .replaceAll('’', "'")
-                  .replaceAll('–', '-')
-                  .replaceAll('—', '-')
-                  .replaceAll('…', '...')
-                  .trim();
-              };
-              await handleAutoquiz(currentCourse);
-            }}
+            onClick={async () => await handleAutoquiz(currentCourse)}
             isLoading={isLoading.isLoadingQuiz}
             icon={<Play width={22} height={22} />}
           >
@@ -293,77 +279,79 @@ export default function App() {
         </div>
 
         <div className="grid grid-cols-1 text-sm">
-          <div
-            className="font-bold text-sm my-3 flex gap-2 cursor-pointer"
-            onClick={() => setIsAccordionOpen(!isAccordionOpen)}
-          >
+          <div className="font-bold text-sm my-3 flex gap-2 cursor-pointer">
             <Setting width={20} height={20} />
             Settings
           </div>
 
-          {isAccordionOpen && (
-            <div className="col-span-2">
-              <div className="grid grid-cols-2 gap-2">
-                <span className="flex items-center gap-2">
-                  <span className="text-sm">Method: </span>
-                  <select
-                    className="py-1 px-3 border rounded-lg focus-visible:outline-none text-sm"
-                    onChange={(e) => {
-                      chrome.storage.local.set({ method: e.target.value });
-                    }}
-                  >
-                    {methods.map((value) => (
-                      <option key={value.value} value={value.value}>
-                        {value.name}
-                      </option>
-                    ))}
-                  </select>
-                </span>
-                <Checkbox
-                  id={'auto-submit-quiz'}
-                  checked={options.isAutoSubmitQuiz}
-                  children={'Auto submit quiz'}
-                  onChange={(e: HTMLInputElement) => {
-                    setOptions((prev) => {
-                      chrome.storage.local.set({ isAutoSubmitQuiz: !prev.isAutoSubmitQuiz });
-                      return { ...prev, isAutoSubmitQuiz: !prev.isAutoSubmitQuiz };
-                    });
+          <div className="col-span-2">
+            <div className="grid grid-cols-2 gap-2">
+              <span className="flex items-center gap-2">
+                <span className="text-sm">Picker: </span>
+                <select
+                  className="py-1 px-3 border border-zinc-500 rounded-lg focus-visible:outline-none text-sm"
+                  onChange={(e) => {
+                    chrome.storage.local.set({ method: e.target.value });
+                    setOptions((prev) => ({ ...prev, method: e.target.value as Method }));
+                  }}
+                  value={options.method + ''}
+                >
+                  {methods.map((value) => (
+                    <option key={value.value} value={value.value}>
+                      {value.name}
+                    </option>
+                  ))}
+                </select>
+              </span>
+              <Checkbox
+                id={'auto-submit-quiz'}
+                checked={options.isAutoSubmitQuiz}
+                children={'Auto submit quiz'}
+                onChange={(e: HTMLInputElement) => {
+                  setOptions((prev) => {
+                    chrome.storage.local.set({ isAutoSubmitQuiz: !prev.isAutoSubmitQuiz });
+                    return { ...prev, isAutoSubmitQuiz: !prev.isAutoSubmitQuiz };
+                  });
+                }}
+              />
+            </div>
+
+            {location.href.includes('debug=true') && (
+              <Checkbox
+                id={'is-debug-mode'}
+                checked={options.isDebugMode}
+                children={'Debug mode'}
+                onChange={(e: HTMLInputElement) => {
+                  setOptions((prev) => {
+                    chrome.storage.local.set({ isDebugMode: !prev.isDebugMode });
+                    return { ...prev, isDebugMode: !prev.isDebugMode };
+                  });
+                }}
+              />
+            )}
+            {methods.slice(1).map((method) => (
+              <div className="mt-3 flex gap-4 items-center" key={method.value}>
+                <label htmlFor={`${method.value}-api`} className="inline-block mb-1 text-sm">
+                  {method.name} API:
+                </label>
+                <input
+                  id={`${method.value}-api`}
+                  type="text"
+                  className="border rounded-lg px-2 py-1 flex-1 no-ring border-zinc-500 focus:border-blue-600 text-zinc-500 focus:text-black"
+                  placeholder={`Enter ${method.name} API`}
+                  value={apiKeys[`${method.value}API`] || ''}
+                  onChange={(e) => {
+                    const newValue = e.target.value;
+                    chrome.storage.local.set({ [`${method.value}API`]: newValue });
+                    setApiKeys((prev) => ({
+                      ...prev,
+                      [`${method.value}API`]: newValue,
+                    }));
                   }}
                 />
               </div>
-
-              {location.href.includes('debug=true') && (
-                <Checkbox
-                  id={'is-debug-mode'}
-                  checked={options.isDebugMode}
-                  children={'Debug mode'}
-                  onChange={(e: HTMLInputElement) => {
-                    setOptions((prev) => {
-                      chrome.storage.local.set({ isDebugMode: !prev.isDebugMode });
-                      return { ...prev, isDebugMode: !prev.isDebugMode };
-                    });
-                  }}
-                />
-              )}
-              {methods.slice(1).map((method) => (
-                <div className="mt-3" key={method.value}>
-                  <label htmlFor={`${method.value}-api`} className="mb-1 text-sm">
-                    {method.name} API:
-                  </label>
-                  <input
-                    id={`${method.value}-api`}
-                    type="text"
-                    className="border rounded-lg p-2 w-full"
-                    placeholder={`Enter ${method.name} API`}
-                    value={apiKeys[`${method.value}API`] || ''}
-                    onChange={(e) => {
-                      chrome.storage.local.set({ [`${method.value}API`]: e.target.value });
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+            ))}
+          </div>
         </div>
 
         <Footer />

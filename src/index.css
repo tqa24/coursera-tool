@@ -31,6 +31,12 @@
   margin: 0;
 } */
 
+@layer utilities {
+  .no-ring {
+    @apply focus-visible:outline-none;
+  }
+}
+
 .rotate {
   animation: rotate 1s linear infinite;
 }

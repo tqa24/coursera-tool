@@ -1,8 +1,7 @@
 import { Course, Method } from './type';
 import { waitForSelector, generateRandomString } from './helpers';
 import { appendNotSupported } from './dom-utils';
-import { doWithGemini, doWithDeepSeek } from './api-services';
-import { doWithSource } from './quiz-processor';
+import { doWithGemini, doWithDeepSeek, doWithSource, doWithChatGPT } from './api-services';
 import toast from 'react-hot-toast';
 
 /**
@@ -160,35 +159,12 @@ export const handleAutoquiz = async (course: string, isWithGemini: boolean = fal
         return;
       }
 
-      // Redirect to a quiz page if not already on one
-      if (
-        !location.href.includes('/assignment-submission') &&
-        !location.href.includes('/exam') &&
-        !location.href.includes('/quiz')
-      ) {
-        const data = await getMaterial();
-        let flag = false;
-        data.forEach((item) => {
-          if (
-            !item.completed &&
-            !item.locked &&
-            (item.href.includes('/assignment-submission') ||
-              item.href.includes('/exam') ||
-              item.href.includes('/quiz'))
-          ) {
-            flag = true;
-            location.href = item.href;
-          }
-        });
-        if (!flag) {
-          return;
-        }
-      }
+      await checkQuizPage(); // Redirect to a quiz page if not already on one
 
       // Get user settings and course data
       const { isAutoSubmitQuiz } = await chrome.storage.local.get('isAutoSubmitQuiz');
-      const { isDebugMode } = await chrome.storage.local.get('isDebugMode');
-      const { method } = await chrome.storage.local.get('method');
+      let { method: method1 } = await chrome.storage.local.get('method');
+      let method = method1 ?? Method.Source;
 
       // Fetch course data
       let courses: Course;
@@ -201,18 +177,11 @@ export const handleAutoquiz = async (course: string, isWithGemini: boolean = fal
           return { quizSrc: [] };
         });
 
-      if (isDebugMode === true) {
-        console.log('debugging');
-        console.log(course);
-      }
-
       // Start the quiz attempt if needed
       if (!location.href.includes('/attempt')) {
         await waitForSelector("button[data-testid='CoverPageActionButton']", 3600000)
           .then((item) => item.click())
-          .catch((error) => {
-            console.log(error);
-          });
+          .catch((error) => console.log(error));
         await waitForSelector(
           "button[data-testid='StartAttemptModal__primary-button'], [data-testid='action-button']",
         )
@@ -225,31 +194,10 @@ export const handleAutoquiz = async (course: string, isWithGemini: boolean = fal
       let questions = document.querySelectorAll('.css-1hhf6i, .rc-FormPartsQuestion');
 
       // Process questions using available methods based on the selected method
-      if (method === Method.DeepSeek || !method) {
-        try {
-          await doWithDeepSeek(questions, method);
-        } catch (error) {
-          console.log('Error processing with DeepSeek:', error);
-        }
-      }
-
-      if (method === Method.Gemini || !method) {
-        try {
-          await doWithGemini(questions, method);
-        } catch (error) {
-          console.log('Error processing with Gemini:', error);
-        }
-      }
-
-      if (method === Method.Source || !method) {
-        try {
-          await doWithSource(questions, courses, method);
-        } catch (error) {
-          console.log('Error processing with Source:', error);
-        }
-      }
-
-      console.log('Quiz processing completed');
+      // await doWithChatGPT(questions, method);
+      // await doWithDeepSeek(questions, method);
+      await doWithGemini(questions, method);
+      await doWithSource(questions, courses, method);
 
       // Check agreement checkbox
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -258,26 +206,20 @@ export const handleAutoquiz = async (course: string, isWithGemini: boolean = fal
           element.scrollIntoView();
           element.click();
         })
-        .catch((error) => {
-          console.log('Error checking agreement checkbox:', error);
-        });
+        .catch((error) => console.log('Error checking agreement checkbox:', error));
 
       // Auto-submit if enabled
-      let autoSubmit = isAutoSubmitQuiz == undefined ? true : isAutoSubmitQuiz;
+      let autoSubmit = isAutoSubmitQuiz ?? true;
       if (autoSubmit) {
         waitForSelector('button[data-testid="submit-button"], button[data-test="submit-button"]')
           .then((element: HTMLInputElement) => {
             element.click();
             element.scrollIntoView();
           })
-          .catch((error) => {
-            console.log('Error submitting quiz:', error);
-          });
+          .catch((error) => console.log('Error submitting quiz:', error));
         waitForSelector('button[data-testid="dialog-submit-button"]', 2000)
           .then((element: HTMLInputElement) => element.click())
-          .catch((error) => {
-            console.log('Error confirming submission:', error);
-          });
+          .catch((error) => console.log('Error confirming submission:', error));
       }
     },
     {
@@ -382,9 +324,7 @@ export const handlePeerGradedAssignment = async () => {
 
   await waitForSelector('button[aria-label="Submit"]', 10000)
     .then((element: HTMLInputElement) => element.click())
-    .catch((error) => {
-      console.log(error);
-    });
+    .catch((error) => console.log(error));
   await waitForSelector('button[data-testid="dialog-submit-button"]', 10000)
     .then((element: HTMLInputElement) => element.click())
     .catch((error) => {});
@@ -497,9 +437,7 @@ export const handleDiscussionPrompt = async () => {
     toast.loading(
       `Handling discussions slowly to prevent rate limiting. Progress: ${progress}/${discussion.length}`,
       {
-        style: {
-          border: '1px solid #0356fc',
-        },
+        style: { border: '1px solid #0356fc' },
         position: 'top-right',
       },
     );
@@ -508,9 +446,7 @@ export const handleDiscussionPrompt = async () => {
   for (let item of discussion) {
     const result = await fetch(
       `https://www.coursera.org/api/onDemandDiscussionPrompts.v1/${userId}~${courseId}~${item.id}?fields=onDemandDiscussionPromptQuestions.v1(content,creatorId,createdAt,forumId,sessionId,lastAnsweredBy,lastAnsweredAt,totalAnswerCount,topLevelAnswerCount,viewCount),promptType,question&includes=question`,
-      {
-        method: 'GET',
-      },
+      { method: 'GET' },
     ).then((res) => res.json());
     const discussionId =
       result?.elements?.[0]?.promptType?.definition?.courseItemForumQuestionId.split('~')[2];
@@ -521,9 +457,7 @@ export const handleDiscussionPrompt = async () => {
           `https://www.coursera.org/api/onDemandCourseForumAnswers.v1/?fields=content%2CforumQuestionId%2CparentForumAnswerId%2Cstate%2CcreatorId%2CcreatedAt%2Corder%2CupvoteCount%2CchildAnswerCount%2CisFlagged%2CisUpvoted%2CcourseItemForumQuestionId%2CparentCourseItemForumAnswerId%2ConDemandSocialProfiles.v1(userId%2CexternalUserId%2CfullName%2CphotoUrl%2CcourseRole)%2ConDemandCourseForumAnswers.v1(content%2CforumQuestionId%2CparentForumAnswerId%2Cstate%2CcreatorId%2CcreatedAt%2Corder%2CupvoteCount%2CchildAnswerCount%2CisFlagged%2CisUpvoted%2CcourseItemForumQuestionId%2CparentCourseItemForumAnswerId)&includes=profiles%2Cchildren%2CuserId`,
           {
             method: 'POST',
-            headers: {
-              'x-csrf3-token': csrf3Token,
-            },
+            headers: { 'x-csrf3-token': csrf3Token },
             body: JSON.stringify({
               content: {
                 typeName: 'cml',
@@ -545,9 +479,7 @@ export const handleDiscussionPrompt = async () => {
         toast.loading(
           `Handling discussions slowly to prevent rate limiting. Progress: ${progress}/${discussion.length}`,
           {
-            style: {
-              border: '1px solid #0356fc',
-            },
+            style: { border: '1px solid #0356fc' },
             position: 'top-right',
           },
         );
@@ -607,9 +539,7 @@ export const requestGradingByPeer = async () => {
 
   await fetch('https://www.coursera.org/graphql-gateway?opname=RequestGradingByPeer', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify([
       {
         operationName: 'RequestGradingByPeer',
@@ -627,11 +557,33 @@ export const requestGradingByPeer = async () => {
     ]),
   })
     .then((res) => {
-      if (res.status === 200) {
-        location.reload();
-      }
+      if (res.status === 200) location.reload();
     })
-    .catch((error) => {
-      console.log(error);
+    .catch((error) => console.log(error));
+};
+
+export const checkQuizPage = async () => {
+  if (
+    !location.href.includes('/assignment-submission') &&
+    !location.href.includes('/exam') &&
+    !location.href.includes('/quiz')
+  ) {
+    const data = await getMaterial();
+    let flag = false;
+    data.forEach((item) => {
+      if (
+        !item.completed &&
+        !item.locked &&
+        (item.href.includes('/assignment-submission') ||
+          item.href.includes('/exam') ||
+          item.href.includes('/quiz'))
+      ) {
+        flag = true;
+        location.href = item.href;
+      }
     });
+    if (!flag) {
+      return;
+    }
+  }
 };

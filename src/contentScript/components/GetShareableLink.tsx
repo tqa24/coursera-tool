@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { LoadingIcon } from './Icon';
-import { getMaterial, getMetadata } from '../utils';
+import { getMaterial, getMetadata } from '../index';
 
 export default function GetShareableLink() {
   const [url, setUrl] = React.useState("Your submission's url here");
@@ -65,7 +65,7 @@ export default function GetShareableLink() {
           id="website-url"
           type="text"
           aria-describedby="helper-text-explanation"
-          className="bg-gray-50 border border-e-0 !text-black border-gray-300 border-s-0 focus:ring-blue-500 focus:border-blue-500 block w-full p-2"
+          className="bg-gray-50 border border-e-0 !text-black border-zinc-500 border-s-0 focus:ring-blue-500 focus:border-blue-500 block w-full p-2"
           value={url}
           readOnly
           disabled

@@ -12,6 +12,7 @@ export type Course = {
 export type SettingOptions = {
   isAutoSubmitQuiz: boolean;
   isDebugMode: boolean;
+  method: Method | null;
 };
 
 export type LoadingProps = {

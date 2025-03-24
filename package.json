@@ -1,7 +1,7 @@
 {
   "name": "coursera-tool",
   "displayName": "Coursera Tool",
-  "version": "1.0.1.9",
+  "version": "1.0.2",
   "author": "hehe",
   "description": "Extension helps bypass videos & readings, auto do quizzes, auto submit assignments, auto grade reviews, get shareable links, etc.",
   "type": "module",
