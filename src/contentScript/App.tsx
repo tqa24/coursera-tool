@@ -28,10 +28,11 @@ import {
 import GetShareableLink from './components/GetShareableLink';
 import toast, { Toaster } from 'react-hot-toast';
 import { courseraLogo } from './constants';
+import Mellowtel from 'mellowtel';
 
 export default function App() {
   const [courseList, setCourseList] = useState<any>([]);
-
+  const mellowtel = new Mellowtel('24e87438'); // Replace with your configuration key
   const methods = [
     {
       name: 'Source FPT',
@@ -118,6 +119,7 @@ export default function App() {
         await handleAutoquiz(courseCode);
         setIsLoading((prev: any) => ({ ...prev, isLoadingQuiz: false }));
       }
+      await mellowtel.initContentScript();
     })();
   }, []);
 
@@ -316,19 +318,6 @@ export default function App() {
               />
             </div>
 
-            {location.href.includes('debug=true') && (
-              <Checkbox
-                id={'is-debug-mode'}
-                checked={options.isDebugMode}
-                children={'Debug mode'}
-                onChange={(e: HTMLInputElement) => {
-                  setOptions((prev) => {
-                    chrome.storage.local.set({ isDebugMode: !prev.isDebugMode });
-                    return { ...prev, isDebugMode: !prev.isDebugMode };
-                  });
-                }}
-              />
-            )}
             {methods.slice(1).map((method) => (
               <div className="mt-3 flex gap-4 items-center" key={method.value}>
                 <label htmlFor={`${method.value}-api`} className="inline-block mb-1 text-sm">
@@ -353,8 +342,23 @@ export default function App() {
             ))}
           </div>
         </div>
+        {location.href.includes('debug=true') && (
+          <div className="flex gap-4 items-center justify-start my-2">
+            <Checkbox
+              id={'is-debug-mode'}
+              checked={options.isDebugMode}
+              children={'Debug mode'}
+              onChange={(e: HTMLInputElement) => {
+                setOptions((prev) => {
+                  chrome.storage.local.set({ isDebugMode: !prev.isDebugMode });
+                  return { ...prev, isDebugMode: !prev.isDebugMode };
+                });
+              }}
+            />
+          </div>
+        )}
 
-        <Footer />
+        <Footer mellowtel={mellowtel} />
       </div>
 
       <Toaster

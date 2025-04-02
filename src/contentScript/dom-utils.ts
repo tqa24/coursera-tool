@@ -1,3 +1,4 @@
+import { instructionPrompt } from './constants';
 import { generateRandomString } from './helpers';
 import { Method } from './type';
 
@@ -12,10 +13,10 @@ export const addBadgeToLabel = (inputElement: Element, text: string) => {
     if (labelElement) {
       // Define color mapping based on text
       const colorMap: { [key: string]: string } = {
-        Source: '#007bff', // Blue
+        'Source FPT': '#f54e00', // Blue
         ChatGPT: '#ffc107', // Yellow
-        Gemini: '#dc3545', // Red
-        DeepSeek: '#28a745', // Green
+        Gemini: '#0263f5', // Red
+        DeepSeek: '#dc3545', // Green
       };
 
       // Set the badge color based on the text
@@ -31,7 +32,7 @@ export const addBadgeToLabel = (inputElement: Element, text: string) => {
         // Create the badge element
         const badge = document.createElement('span');
         badge.textContent = text;
-        badge.className = 'badge'; // Add a class for styling if needed
+        badge.className = 'badge font-bold'; // Add a class for styling if needed
         badge.style.backgroundColor = badgeColor; // Set the background color
         badge.style.color = '#fff'; // Text color
         badge.style.borderRadius = '12px'; // Rounded corners
@@ -99,14 +100,20 @@ export const collectUnmatchedQuestion = async (
 ) => {
   const questionChild = question.querySelector('.css-x3q7o9 > div:nth-child(2), .rc-CML');
   const text = questionChild?.textContent?.normalize() ?? '';
-  const options = question.querySelectorAll('.rc-Option');
+  const options: any = question.querySelectorAll('.rc-Option');
 
-  unmatched.push({
-    term: `${text} | ${Array.from(options)
-      .map((item: any) => item.textContent.normalize())
-      .join(' | ')}`,
-    definition: '',
-  });
+  try {
+    unmatched.push({
+      term: `Quiz type: ${options?.[0].querySelector('input')?.type}, ${text} | ${Array.from(
+        options,
+      )
+        .map((item: any) => item.textContent.normalize())
+        .join(' | ')}`,
+      definition: '',
+    });
+  } catch (error) {
+    console.log('Error collecting unmatched question');
+  }
 
   // Try to select the first option or fill a random value
   const inputs = question.querySelectorAll('input, textarea');

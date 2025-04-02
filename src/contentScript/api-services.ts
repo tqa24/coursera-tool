@@ -1,7 +1,129 @@
 import { QuizItem, Method, Course } from './type';
-import { extendStringPrototype, normalize } from './helpers';
+import { extendStringPrototype } from './helpers';
 import { addBadgeToLabel, collectUnmatchedQuestion } from './dom-utils';
-import { instructionPrompt } from './constants';
+import { instructionPrompt, sourceInstructionPrompt } from './constants';
+import toast from 'react-hot-toast';
+// import testSource from '../keys/SSL101c.json';
+
+/**
+ * Process quiz questions using source material
+ * @param questions The list of quiz questions
+ * @param course The course data
+ * @param method The processing method
+ */
+export const doWithSource = async (
+  questions: NodeListOf<Element>,
+  course: Course,
+  method: string,
+) => {
+  if (!location.href.includes('assignment-submission')) {
+    return;
+  }
+
+  const { isDebugMode } = await chrome.storage.local.get('isDebugMode');
+
+  // Ensure normalize is available
+  extendStringPrototype();
+
+  // Questions without matching answers in source
+  let unmatched: any[] = [];
+  let choosenSource: any[] = [];
+
+  // if (isDebugMode != undefined && !isDebugMode) choosenSource = course.quizSrc;
+  // else choosenSource = testSource.quizSrc;
+  choosenSource = course.quizSrc;
+
+  // Process each question
+  questions.forEach((question: any, i: number) => {
+    const questionChild = question.querySelector('.css-x3q7o9 > div:nth-child(2), .rc-CML');
+    if (!questionChild) {
+      if (isDebugMode) console.log('Question child not found for question', i);
+      return;
+    }
+
+    const text = questionChild.textContent?.normalize() ?? '';
+
+    // Find matching questions in the source database
+    const matchingQuestions =
+      choosenSource?.filter(
+        (item) => item.term.normalize().includes(text) || text.includes(item.term.normalize()),
+      ) || [];
+    // console.log(`match: ${matchingQuestions.length}, questionChild: `, text);
+
+    // console.log('matchingQuestions', matchingQuestions);
+    if (matchingQuestions.length > 0) {
+      // Process questions with matches in the source
+      let answered = false;
+
+      matchingQuestions.forEach((matchedQuestion) => {
+        const options = question.querySelectorAll('.rc-Option');
+
+        if (options.length > 0) {
+          // Multiple choice question
+          for (const option of options) {
+            const optionText =
+              option?.querySelector('span:nth-child(3)')?.textContent?.normalize() ?? '';
+            // console.log('optionText', optionText);
+
+            if (matchedQuestion.definition.normalize().includes(optionText)) {
+              answered = true;
+              const input = option.querySelector('input');
+
+              if (input) {
+                if (isDebugMode) console.log('Found matching option:', optionText);
+
+                method === Method.Source && input.click();
+                addBadgeToLabel(input, 'Source FPT');
+              }
+            }
+          }
+        } else {
+          // Text input question
+          try {
+            const inputElement = question.querySelector(
+              'input[type="text"], textarea, input[type="number"]',
+            );
+
+            if (inputElement) {
+              answered = true;
+              inputElement.click();
+              inputElement.value = matchedQuestion.definition;
+              inputElement.dispatchEvent(new Event('change', { bubbles: true }));
+
+              if (isDebugMode) console.log('Filled text input with:', matchedQuestion.definition);
+            }
+          } catch (error) {
+            console.error('Error filling text input:', error);
+          }
+        }
+      });
+
+      if (!answered) {
+        if (isDebugMode) console.log('No matching answer found for question', i);
+
+        // No matching answers found, try to select first option
+        const input = question.querySelector('input, textarea');
+        if (input) {
+          method === Method.Source && input.click();
+        }
+
+        // Add to unmatched list
+        collectUnmatchedQuestion(question, unmatched, method as Method);
+      }
+    } else {
+      // No matching questions in source, collect for AI processing
+      if (isDebugMode) console.log('No matching question found in source for:', text);
+      collectUnmatchedQuestion(question, unmatched, method as Method);
+    }
+  });
+
+  // Log unmatched questions for debugging
+  if (unmatched.length > 0 && isDebugMode) {
+    console.log(`${unmatched.length} questions not found in source:`, unmatched);
+    const prompt = `${JSON.stringify(unmatched)} ${sourceInstructionPrompt}`;
+    console.log(prompt);
+  }
+};
 
 /**
  * Extract question data from DOM elements
@@ -19,7 +141,7 @@ export const extractQuestionData = (questions: NodeListOf<Element>): any[] => {
         .map((item: any) => item.innerText)
         .join(' | ')}`,
       definition: '',
-      element: item, // Store reference to the original element
+      // element: item, // Store reference to the original element
     };
   });
 };
@@ -35,15 +157,23 @@ export const processAnswers = (
 ): number => {
   let correctCount = 0;
 
+  extendStringPrototype();
+
   questions.forEach((question: any, i: number) => {
     if (!answers[i]) return;
 
     let ok = false;
-    let answer = normalize(answers[i].definition);
+    let answer = answers[i].definition?.normalize();
     console.log(`Processing answer for question ${i + 1}:`, answer);
 
     for (const key of question.querySelectorAll('.rc-Option')) {
-      const keyText = normalize(key.querySelector('span:nth-child(3)')?.innerText) ?? '';
+      const keyText =
+        key
+          .querySelector('span:nth-child(3)')
+          ?.innerText?.normalize()
+          .replace(/[,.]+$/, '') ?? '';
+      // console.log('Key text:', keyText);
+
       if (answer.includes(keyText) || keyText.includes(answer)) {
         ok = true;
         let input = key.querySelector('input');
@@ -80,6 +210,7 @@ export const doWithChatGPT = async (questions: NodeListOf<Element>, method: stri
 
   // Extract question data
   const questionData = extractQuestionData(questions);
+
   console.log('Extracted question data for Gemini');
 
   // Prepare the prompt
@@ -89,8 +220,8 @@ export const doWithChatGPT = async (questions: NodeListOf<Element>, method: stri
   const body = {
     model: 'gpt-4o',
     messages: [
-      { role: 'system', content: instructionPrompt },
-      { role: 'user', content: prompt },
+      // { role: 'system', content: instructionPrompt },
+      { role: 'user', content: instructionPrompt + ' ' + prompt },
     ],
   };
 
@@ -137,6 +268,7 @@ export const doWithGemini = async (questions: NodeListOf<Element>, method: strin
 
   // Extract question data
   const questionData = extractQuestionData(questions);
+  console.log('questionData', questionData);
 
   // Prepare the prompt
   const prompt = JSON.stringify(questionData.map((q) => ({ term: q.term, definition: '' })));
@@ -150,7 +282,7 @@ export const doWithGemini = async (questions: NodeListOf<Element>, method: strin
   try {
     // Make API request
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiAPI}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiAPI}`,
       {
         body: JSON.stringify(body),
         method: 'POST',
@@ -173,7 +305,12 @@ export const doWithGemini = async (questions: NodeListOf<Element>, method: strin
     }
 
     // Parse the response
-    const cleanText = text.replace('```json', '').replace('```', '');
+    // const cleanText = text.replace('```json', '').replace('```', '');
+    const cleanText = text
+      .replace(/```json/, '')
+      .replace(/```/, '')
+      .trim();
+    // console.log('cleanText:', cleanText);
     const answers: QuizItem[] = JSON.parse(cleanText);
     console.log('Gemini answers:', answers);
 
@@ -181,6 +318,7 @@ export const doWithGemini = async (questions: NodeListOf<Element>, method: strin
     const correctCount = processAnswers(questions, answers, method, 'Gemini');
     console.log(`Gemini found answers for ${correctCount}/${questions.length} questions`);
   } catch (error) {
+    toast.error('Error processing with Gemini, please try again later');
     console.error('Error processing with Gemini:', error);
   }
 };
@@ -236,117 +374,5 @@ export const doWithDeepSeek = async (questions: NodeListOf<Element>, method: str
     console.log(`DeepSeek found answers for ${correctCount}/${questions.length} questions`);
   } catch (error) {
     console.error('Error processing with DeepSeek:', error);
-  }
-};
-
-/**
- * Process quiz questions using source material
- * @param questions The list of quiz questions
- * @param course The course data
- * @param method The processing method
- */
-export const doWithSource = async (
-  questions: NodeListOf<Element>,
-  course: Course,
-  method: string,
-) => {
-  if (!location.href.includes('assignment-submission')) {
-    return;
-  }
-
-  const { isDebugMode } = await chrome.storage.local.get('isDebugMode');
-
-  // Ensure normalize is available
-  extendStringPrototype();
-
-  // Questions without matching answers in source
-  let unmatched: any[] = [];
-
-  // Process each question
-  questions.forEach((question: any, i: number) => {
-    const questionChild = question.querySelector('.css-x3q7o9 > div:nth-child(2), .rc-CML');
-    if (!questionChild) {
-      if (isDebugMode) console.log('Question child not found for question', i);
-      return;
-    }
-
-    const text = questionChild.textContent?.normalize() ?? '';
-
-    // Find matching questions in the source database
-    const matchingQuestions =
-      course?.quizSrc?.filter(
-        (item) =>
-          item.term.toLowerCase().includes(text.toLowerCase()) ||
-          text.toLowerCase().includes(item.term.toLowerCase()),
-      ) || [];
-
-    if (matchingQuestions.length > 0) {
-      // Process questions with matches in the source
-      let answered = false;
-
-      matchingQuestions.forEach((matchedQuestion) => {
-        const options = question.querySelectorAll('.rc-Option');
-
-        if (options.length > 0) {
-          // Multiple choice question
-          for (const option of options) {
-            const optionText =
-              option?.querySelector('span:nth-child(3)')?.textContent?.normalize() ?? '';
-
-            if (matchedQuestion.definition.toLowerCase().includes(optionText.toLowerCase())) {
-              answered = true;
-              const input = option.querySelector('input');
-
-              if (input) {
-                if (isDebugMode) console.log('Found matching option:', optionText);
-
-                method === Method.Source && input.click();
-                addBadgeToLabel(input, 'Source FPT');
-              }
-            }
-          }
-        } else {
-          // Text input question
-          try {
-            const inputElement = question.querySelector(
-              'input[type="text"], textarea, input[type="number"]',
-            );
-
-            if (inputElement) {
-              answered = true;
-              inputElement.click();
-              inputElement.value = matchedQuestion.definition;
-              inputElement.dispatchEvent(new Event('change', { bubbles: true }));
-
-              if (isDebugMode) console.log('Filled text input with:', matchedQuestion.definition);
-            }
-          } catch (error) {
-            console.error('Error filling text input:', error);
-          }
-        }
-      });
-
-      if (!answered) {
-        if (isDebugMode) console.log('No matching answer found for question', i);
-
-        // No matching answers found, try to select first option
-        const input = question.querySelector('input, textarea');
-        if (input) {
-          method === Method.Source && input.click();
-        }
-
-        // Add to unmatched list
-        collectUnmatchedQuestion(question, unmatched, method as Method);
-      }
-    } else {
-      // No matching questions in source, collect for AI processing
-      if (isDebugMode) console.log('No matching question found in source for:', text);
-      collectUnmatchedQuestion(question, unmatched, method as Method);
-    }
-  });
-
-  // Log unmatched questions for debugging
-  if (unmatched.length > 0 && isDebugMode) {
-    console.log(`${unmatched.length} questions not found in source:`, unmatched);
   }
 };

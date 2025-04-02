@@ -426,16 +426,32 @@ export const handleDiscussionPrompt = async () => {
     /(\d+~[A-Za-z0-9-_]+)/,
   );
   const { csrf3Token } = await chrome.storage.sync.get(['csrf3Token']);
+  console.log('csrfToken', csrf3Token);
+
   const userId = matchId1?.[1].split('~')[0];
 
   let discussion = data?.filter((item: any) =>
     item?.contentSummary?.typeName.includes('discussionPrompt'),
   );
-  let progress = 1;
+  let progress = 0;
 
   if (discussion.length > 0) {
     toast.loading(
-      `Handling discussions slowly to prevent rate limiting. Progress: ${progress}/${discussion.length}`,
+      <div>
+        <div>
+          Handling discussions slowly to prevent{' '}
+          <a
+            className="text-blue-600"
+            href="https://www.coursera.support/s/question/0D51U00003BlYiuSAF/you-are-temporarily-blocked-as-you-have-made-too-many-requests-please-try-again-later?language=en_US"
+          >
+            Coursera's rate limit policy
+          </a>
+          .
+        </div>
+        <div>
+          Progress: <span id="progress">{progress}</span>/{discussion.length}
+        </div>
+      </div>,
       {
         style: { border: '1px solid #0356fc' },
         position: 'top-right',
@@ -476,13 +492,7 @@ export const handleDiscussionPrompt = async () => {
         progress++;
 
         // Update the toast message with new progress
-        toast.loading(
-          `Handling discussions slowly to prevent rate limiting. Progress: ${progress}/${discussion.length}`,
-          {
-            style: { border: '1px solid #0356fc' },
-            position: 'top-right',
-          },
-        );
+        document.getElementById('progress')!.innerHTML = progress + '';
 
         if (discussion.length >= 3) {
           await new Promise((resolve) => setTimeout(resolve, 9000));

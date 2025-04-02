@@ -1,9 +1,9 @@
 {
   "name": "coursera-tool",
   "displayName": "Coursera Tool",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "author": "hehe",
-  "description": "Extension helps bypass videos & readings, auto do quizzes, auto submit assignments, auto grade reviews, get shareable links, etc.",
+  "description": "Extension helps bypass videos & readings, auto do quizz, auto submit assignment, auto grade reviews, get shareable links in Coursera",
   "type": "module",
   "license": "MIT",
   "keywords": [
@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "cheerio": "^1.0.0",
+    "mellowtel": "^1.5.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.5.1"

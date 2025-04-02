@@ -1,6 +1,6 @@
 export default function Checkbox({ id, checked, children, onChange }: any) {
   return (
-    <div className="flex items-center justify-center w-full">
+    <div className="flex items-center justify-center">
       <input
         id={id}
         type="checkbox"

@@ -24,27 +24,6 @@ export const waitForSelector = (selector: string, timeout = 5000) => {
 };
 
 /**
- * Normalizes text by removing extra spaces and standardizing punctuation
- * @param text The text to normalize
- * @returns Normalized text
- */
-export const normalize = (text: string) => {
-  return text
-    .replaceAll('\u00A0', '')
-    .replace(/\s+/g, ' ')
-    .replaceAll('\n', ' ')
-    .replaceAll('“', '"')
-    .replaceAll('”', '"')
-    .replaceAll('‘', "'")
-    .replaceAll('’', "'")
-    .replaceAll('–', '-')
-    .replaceAll('—', '-')
-    .replaceAll('…', '...')
-    .trim()
-    .toLowerCase();
-};
-
-/**
  * Generates a random string of specified length
  * @param numWords Number of words to include in the string
  * @param delimiter Character to use between words
@@ -68,13 +47,15 @@ export const extendStringPrototype = () => {
     return this.replaceAll('\u00A0', '')
       .replace(/\s+/g, ' ')
       .replaceAll('\n', ' ')
-      .replaceAll('"', '"')
-      .replaceAll('"', '"')
-      .replaceAll("'", "'")
-      .replaceAll("'", "'")
+      .replaceAll('“', '"')
+      .replaceAll('”', '"')
+      .replaceAll('‘', "'")
+      .replaceAll('’', "'")
       .replaceAll('–', '-')
       .replaceAll('—', '-')
       .replaceAll('…', '...')
+      .replaceAll('Gemini', '')
+      .replaceAll('Source FPT', '')
       .trim();
   };
 };

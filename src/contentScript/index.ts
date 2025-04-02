@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom/client';
-import App from './App.js';
+import App from './App';
 import React from 'react';
 import '../index.css';
 import { waitForSelector, generateRandomString, extendStringPrototype } from './helpers';
@@ -16,11 +16,6 @@ import {
 } from './assignment-handlers';
 import { doWithGemini, doWithDeepSeek, doWithSource } from './api-services';
 import { addBadgeToLabel, appendNotSupported, collectUnmatchedQuestion } from './dom-utils';
-
-console.info('contentScript is running');
-
-// const rootPath = 'div.rc-SplitPeerSubmissionPage div.rc-PeerReviewHeader';
-// const rootPath = ".rc-PageHeader > div.rc";
 
 const isElementLoaded = async (selector: any) => {
   while (document.querySelector(selector) === null) {
