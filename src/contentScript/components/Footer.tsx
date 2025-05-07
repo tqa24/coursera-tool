@@ -1,28 +1,7 @@
 import { Feedback as FeedbackIcon, Help, Support } from './Icon';
 import packageData from '../../../package.json';
-import Mellowtel from 'mellowtel';
-export default function Footer({ mellowtel }: { mellowtel: Mellowtel }) {
-  // console.log('time: ', new Date().toLocaleTimeString());
-  // console.log('time: ', new Date().toLocaleString());
-  // console.log('time: ', new Date().toISOString());
-  // console.log('time: ', new Date().toUTCString());
-  // console.log('time: ', new Date().getUTCDate());
-  // console.log('time: ', new Date().toLocaleDateString());
-  // console.log('time: ', new Date().getTimezoneOffset());
-  // console.log('time: ', new Date().toTimeString());
-  // const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  // const getOffset = (tz: any) =>
-  //   Intl.DateTimeFormat('ia', {
-  //     timeZoneName: 'shortOffset',
-  //     timeZone: tz,
-  //   })
-  //     .formatToParts()
-  //     .find((i) => i.type === 'timeZoneName')
-  //     ?.value // => "GMT+/-hh:mm"
-  //     .slice(3); //=> +/-hh:mm
 
-  // console.log(tz + ' UTC' + getOffset(tz));
-
+export default function Footer() {
   return (
     <div>
       <div className="text-xs font-semibold pt-3 flex">

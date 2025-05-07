@@ -27,33 +27,16 @@ export default defineManifest({
     {
       matches: ['https://www.coursera.org/*'],
       js: ['src/contentScript/index.ts'],
-    },
-    {
-      matches: ['<all_urls>'],
-      js: ['src/third-party/mellowtel.js'],
-      run_at: 'document_start',
-      all_frames: true,
+      // run_at: 'document_end',
     },
   ],
-  homepage_url: 'https://www.facebook.com/au.kien.thanh.2307',
+  homepage_url: 'https://www.coursera.org',
   web_accessible_resources: [
     {
       resources: ['img/favicon-v2-194x194.png'],
       matches: [],
     },
-    {
-      resources: ['src/third-party/burke.js'],
-      matches: ['<all_urls>'],
-    },
-    {
-      resources: ['src/third-party/pascoli.html'],
-      matches: ['<all_urls>'],
-    },
   ],
-  permissions: ['storage', 'cookies', 'tabs', 'declarativeNetRequest'],
-  host_permissions: [
-    'https://www.coursera.org/*',
-    'https://generativelanguage.googleapis.com/*',
-    '<all_urls>',
-  ],
+  permissions: ['storage', 'cookies', 'tabs'],
+  host_permissions: ['<all_urls>'],
 });

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { LoadingIcon } from './Icon';
-import { getMaterial, getMetadata } from '../index';
+import { getMaterial, getMetadata, sendTrackingEvent } from '../index';
 
 export default function GetShareableLink() {
   const [url, setUrl] = React.useState("Your submission's url here");
@@ -54,6 +54,7 @@ export default function GetShareableLink() {
         className="flex-shrink-0 z-10 inline-flex items-center py-2 px-3 font-medium text-center text-white border border-blue-500 rounded-s-lg hover:bg-blue-700 hover:border-blue-700 bg-blue-600 cursor-pointer"
         onClick={async () => {
           setIsLoading(true);
+          await sendTrackingEvent();
           await getLink();
           setIsLoading(false);
         }}

@@ -1,43 +1,40 @@
-# test
+# Coursera Tool
 
-> a chrome extension tools built with Vite + React, and Manifest v3
+## Features:
 
-## Installing
+- 📑 Auto done all videos and readings part
+- 💯 Auto do quizzes (Work in progress)
+- 👨‍🎓 Auto submit peer graded assignment (Maybe not work)
+- 📋 One-click for getting link of your submission.
+- ✅ Auto-grade highest score for other's submissions on Coursera.
+- 🤖 Switch your submission from AI grading to peer grading
 
-1. Check if your `Node.js` version is >= **14**.
-2. Change or configurate the name of your extension on `src/manifest`.
-3. Run `npm install` to install the dependencies.
+⚠ Don't overtrust the Auto quiz feature, it may give incorrect answers.
 
-## Developing
+## Installation
 
-run the command
+There are two ways to install the extension:
 
-```shell
-$ cd test
+#### 1. From the [Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/coursera-toolkit-helper/cpebdnelbbfbnjbdafkkcgbbgbdbhhgb) or [Firefox Add-ons](https://addons.mozilla.org/en-GB/firefox/addon/coursera-tool/)
 
-$ npm run dev
-```
+\*Where's the Chrome Web Store version? - It's not yet available due to violating Chrome Web Store's Policy. If you want to add it to your Chrome, you can follow the instructions below.
 
-### Chrome Extension Developer Mode
+#### 2. From the Github
 
-1. set your Chrome browser 'Developer mode' up
-2. click 'Load unpacked', and select `test/build` folder
+1. Download repository
+2. Unzip the packed file
+3. Go to chrome extension manager
+4. Turn on "Developer mode"
+5. Click "Load unpacked" button
+6. Choose "dist" folder in the extracted folder
 
-### Nomal FrontEnd Developer Mode
+## Overview
 
-1. access `http://0.0.0.0:3000/`
-2. when debugging popup page, open `http://0.0.0.0:3000//popup.html`
-3. when debugging options page, open `http://0.0.0.0:3000//options.html`
+![](./images/Screenshot1.png)
 
-## Packing
+![](./images/Screenshot2.png)
 
-After the development of your extension run the command
-
-```shell
-$ npm run build
-```
-
-Now, the content of `build` folder will be the extension ready to be submitted to the Chrome Web Store. Just take a look at the [official guide](https://developer.chrome.com/webstore/publish) to more infos about publishing.
+![](./images/Screenshot3.png)
 
 ---
 

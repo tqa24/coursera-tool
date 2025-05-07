@@ -176,17 +176,23 @@ export const handleAutoquiz = async (course: string, isWithGemini: boolean = fal
           console.log('Error fetching course data:', err);
           return { quizSrc: [] };
         });
+      console.log('courses', courses);
 
       // Start the quiz attempt if needed
       if (!location.href.includes('/attempt')) {
         await waitForSelector("button[data-testid='CoverPageActionButton']", 3600000)
-          .then((item) => item.click())
+          .then((item) => {
+            console.log('item', item);
+            item.click();
+          })
           .catch((error) => console.log(error));
         await waitForSelector(
           "button[data-testid='StartAttemptModal__primary-button'], [data-testid='action-button']",
         )
           .then((item) => item.click())
-          .catch((error) => {});
+          .catch((error) => {
+            console.log(error);
+          });
       }
 
       // Wait for questions to load

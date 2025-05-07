@@ -15,6 +15,7 @@ import {
   getMetadata,
 } from './assignment-handlers';
 import { doWithGemini, doWithDeepSeek, doWithSource } from './api-services';
+import { sendTrackingEvent } from './tracking';
 import { addBadgeToLabel, appendNotSupported, collectUnmatchedQuestion } from './dom-utils';
 
 const isElementLoaded = async (selector: any) => {
@@ -64,4 +65,7 @@ export {
   addBadgeToLabel,
   appendNotSupported,
   collectUnmatchedQuestion,
+
+  // Tracking
+  sendTrackingEvent,
 };

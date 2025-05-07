@@ -28,11 +28,10 @@ import {
 import GetShareableLink from './components/GetShareableLink';
 import toast, { Toaster } from 'react-hot-toast';
 import { courseraLogo } from './constants';
-import Mellowtel from 'mellowtel';
+import { sendTrackingEvent } from './tracking';
 
 export default function App() {
   const [courseList, setCourseList] = useState<any>([]);
-  const mellowtel = new Mellowtel('24e87438'); // Replace with your configuration key
   const methods = [
     {
       name: 'Source FPT',
@@ -54,10 +53,11 @@ export default function App() {
 
   const [currentCourse, setCurrentCourse] = useState('SSL101c');
   const [isShowControlPanel, setIsShowControlPanel] = useState(false);
+
   const [options, setOptions] = useState<SettingOptions>({
     isAutoSubmitQuiz: true,
     isDebugMode: false,
-    method: Method.Source,
+    method: Method.Gemini,
   });
   const [isLoading, setIsLoading] = useState<LoadingProps>({
     isLoadingReview: false,
@@ -119,7 +119,6 @@ export default function App() {
         await handleAutoquiz(courseCode);
         setIsLoading((prev: any) => ({ ...prev, isLoadingQuiz: false }));
       }
-      await mellowtel.initContentScript();
     })();
   }, []);
 
@@ -174,6 +173,7 @@ export default function App() {
             title="Auto skip all readings & videos"
             onClick={async () => {
               setIsLoading((prev: LoadingProps) => ({ ...prev, isLoadingCompleteWeek: true }));
+              await sendTrackingEvent();
               await resolveWeekMaterial();
               setIsLoading((prev: LoadingProps) => ({ ...prev, isLoadingCompleteWeek: false }));
               location.reload();
@@ -187,6 +187,7 @@ export default function App() {
             title="Auto skip all readings & videos"
             onClick={async () => {
               setIsLoading((prev: LoadingProps) => ({ ...prev, isLoadingDiscuss: true }));
+              await sendTrackingEvent();
               await handleDiscussionPrompt();
               setIsLoading((prev: LoadingProps) => ({ ...prev, isLoadingDiscuss: false }));
               location.reload();
@@ -206,6 +207,7 @@ export default function App() {
             title="Auto submit assignments (May not work)"
             onClick={async () => {
               setIsLoading((prev: LoadingProps) => ({ ...prev, isLoadingSubmitPeerGrading: true }));
+              await sendTrackingEvent();
               await handlePeerGradedAssignment();
               setIsLoading((prev: LoadingProps) => ({
                 ...prev,
@@ -220,6 +222,7 @@ export default function App() {
             title="Auto grade assignments"
             onClick={async () => {
               setIsLoading((prev: LoadingProps) => ({ ...prev, isLoadingReview: true }));
+              await sendTrackingEvent();
               toast.promise(
                 async () => {
                   await handleReview();
@@ -240,6 +243,7 @@ export default function App() {
             title="Disable AI grading for your submission"
             onClick={async () => {
               setIsLoading((prev: LoadingProps) => ({ ...prev, isLoadingDisableAI: true }));
+              await sendTrackingEvent();
               await requestGradingByPeer();
               setIsLoading((prev: LoadingProps) => ({ ...prev, isLoadingDisableAI: false }));
             }}
@@ -272,7 +276,15 @@ export default function App() {
           <Button
             className="!py-1"
             title="Start auto quiz"
-            onClick={async () => await handleAutoquiz(currentCourse)}
+            onClick={async () => {
+              // await sendTrackingEvent();
+              try {
+                console.log('handleAutoquiz zo');
+                await handleAutoquiz(currentCourse);
+              } catch (error) {
+                console.log(error);
+              }
+            }}
             isLoading={isLoading.isLoadingQuiz}
             icon={<Play width={22} height={22} />}
           >
@@ -358,9 +370,8 @@ export default function App() {
           </div>
         )}
 
-        <Footer mellowtel={mellowtel} />
+        <Footer />
       </div>
-
       <Toaster
         position="top-center"
         reverseOrder={false}

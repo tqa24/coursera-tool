@@ -3,7 +3,6 @@ import { extendStringPrototype } from './helpers';
 import { addBadgeToLabel, collectUnmatchedQuestion } from './dom-utils';
 import { instructionPrompt, sourceInstructionPrompt } from './constants';
 import toast from 'react-hot-toast';
-// import testSource from '../keys/SSL101c.json';
 
 /**
  * Process quiz questions using source material
@@ -32,6 +31,7 @@ export const doWithSource = async (
   // if (isDebugMode != undefined && !isDebugMode) choosenSource = course.quizSrc;
   // else choosenSource = testSource.quizSrc;
   choosenSource = course.quizSrc;
+  // choosenSource = testSource.quizSrc;
 
   // Process each question
   questions.forEach((question: any, i: number) => {
@@ -164,7 +164,7 @@ export const processAnswers = (
 
     let ok = false;
     let answer = answers[i].definition?.normalize();
-    console.log(`Processing answer for question ${i + 1}:`, answer);
+    // console.log(`Processing answer for question ${i + 1}:`, answer);
 
     for (const key of question.querySelectorAll('.rc-Option')) {
       const keyText =
@@ -181,7 +181,7 @@ export const processAnswers = (
           // Only click if this is the selected method
           if (method === provider.toLowerCase()) {
             input.click();
-            console.log(`Selected answer "${keyText}" for question ${i + 1}`);
+            // console.log(`Selected answer "${keyText}" for question ${i + 1}`);
           }
           addBadgeToLabel(input, provider);
         }
@@ -190,7 +190,7 @@ export const processAnswers = (
 
     if (ok) {
       correctCount++;
-      console.log(`Found match for question ${i + 1}`);
+      // console.log(`Found match for question ${i + 1}`);
     }
   });
 
@@ -276,6 +276,7 @@ export const doWithGemini = async (questions: NodeListOf<Element>, method: strin
   // API request body
   const body = {
     system_instruction: { parts: { text: instructionPrompt } },
+    // system_instruction: { parts: { text: sourceInstructionPrompt } },
     contents: [{ parts: [{ text: prompt }] }],
   };
 
@@ -289,10 +290,16 @@ export const doWithGemini = async (questions: NodeListOf<Element>, method: strin
         headers: { 'Content-Type': 'application/json' },
       },
     );
+    console.log('response', response);
     if (!response.ok && method == Method.Gemini) {
-      alert(
-        'Wrong Gemini API key, see the tutorial video to get one: https://www.youtube.com/watch?v=OVnnVnLZPEo and put it in the extension settings',
-      );
+      if (response.status == 503) {
+        const data = await response.json();
+        alert(data?.error?.message);
+      } else {
+        alert(
+          'Wrong Gemini API key, see the tutorial video to get one: https://www.youtube.com/watch?v=OVnnVnLZPEo and put it in the extension settings',
+        );
+      }
       return;
     }
 
