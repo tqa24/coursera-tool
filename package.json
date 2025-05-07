@@ -1,6 +1,6 @@
 {
-  "name": "coursera-tool",
-  "displayName": "Coursera Tool",
+  "name": "coursera-toolkit",
+  "displayName": "Coursera Toolkit",
   "version": "1.0.5.1",
   "author": "hehe",
   "description": "Extension helps bypass videos & readings, auto do quizz, auto submit assignment, auto grade reviews, get shareable links in Coursera",

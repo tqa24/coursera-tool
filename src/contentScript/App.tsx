@@ -277,9 +277,8 @@ export default function App() {
             className="!py-1"
             title="Start auto quiz"
             onClick={async () => {
-              // await sendTrackingEvent();
+              await sendTrackingEvent();
               try {
-                console.log('handleAutoquiz zo');
                 await handleAutoquiz(currentCourse);
               } catch (error) {
                 console.log(error);

@@ -17,16 +17,20 @@ There are two ways to install the extension:
 
 #### 1. From the [Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/coursera-toolkit-helper/cpebdnelbbfbnjbdafkkcgbbgbdbhhgb) or [Firefox Add-ons](https://addons.mozilla.org/en-GB/firefox/addon/coursera-tool/)
 
-\*Where's the Chrome Web Store version? - It's not yet available due to violating Chrome Web Store's Policy. If you want to add it to your Chrome, you can follow the instructions below.
+\*Where's the Chrome Web Store version? - It's not yet available due to violating Chrome Web Store's Policy. If you want to add it to your Chrome, you can follow the second way below.
 
 #### 2. From the Github
 
-1. Download repository
-2. Unzip the packed file
-3. Go to chrome extension manager
+For user who dont want to install from Edge or Firefox, you can install it from the Github directly and add it to your Chrome manually.
+
+1. Download latest `build.zip` file from the [Releases](https://github.com/Pear104/coursera-tool/releases)
+2. Unzip the file
+3. Go to [Chrome extension manager](chrome://extensions/])
 4. Turn on "Developer mode"
 5. Click "Load unpacked" button
-6. Choose "dist" folder in the extracted folder
+6. Choose the unzipped folder
+
+> You can check this [link](https://ui.vision/howto/install-chrome-extension-from-file) for more detail instruction.
 
 ## Overview
 
