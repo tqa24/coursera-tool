@@ -76,7 +76,7 @@ export default function App() {
 
   useEffect(() => {
     (async () => {
-      let courseMap = await fetch('https://ecec123ecec.github.io/coursera-db/courseMap.json', {
+      let courseMap = await fetch('https://pear104.github.io/fuquiz-db/courseMap.json', {
         cache: 'no-store',
       }).then((res) => res.json());
       // console.log(courseMap);

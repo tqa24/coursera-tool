@@ -168,7 +168,7 @@ export const handleAutoquiz = async (course: string, isWithGemini: boolean = fal
 
       // Fetch course data
       let courses: Course;
-      courses = await fetch(`https://ecec123ecec.github.io/coursera-db/${course}.json`, {
+      courses = await fetch(`https://pear104.github.io/fuquiz-db/${course}.json`, {
         cache: 'no-store',
       })
         .then((res) => res.json())

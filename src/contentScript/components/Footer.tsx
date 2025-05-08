@@ -10,7 +10,7 @@ export default function Footer() {
           <a
             className="grow-0 flex gap-2 items-center hover:text-blue-700 hover:underline"
             target="_blank"
-            href="https://ecec123ecec.github.io/coursera-db/how-to-use.html"
+            href="https://pear104.github.io/fuquiz-db/"
           >
             <Help width={16} height={16} />
             How to use?
@@ -26,7 +26,7 @@ export default function Footer() {
           <a
             className="grow-0 flex gap-2 items-center hover:text-blue-700 hover:underline"
             target="_blank"
-            href="https://www.facebook.com/au.kien.thanh.2307"
+            href="https://www.facebook.com/profile.php?id=100074006097767"
           >
             <Support width={16} height={16} />
             Support
