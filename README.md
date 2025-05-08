@@ -1,4 +1,4 @@
-# 🎓 Coursera Toolkit Extension
+# 🎓 Coursera Tool Extension
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/Pear104/coursera-tool?style=flat-square)
 ![GitHub stars](https://img.shields.io/github/stars/Pear104/coursera-tool?style=flat-square)
