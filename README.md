@@ -1,53 +1,73 @@
-# Coursera Tool
+# 🎓 Coursera Toolkit Extension
 
-This extension is just a small helper for doing Coursera's stuffs, for educational purposes only. If you really use the Coursera's certificates for your works, please do it by yourself
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/Pear104/coursera-tool?style=flat-square)
+![GitHub stars](https://img.shields.io/github/stars/Pear104/coursera-tool?style=flat-square)
+![Firefox](https://img.shields.io/amo/v/coursera-tool?label=Firefox%20Add-on&style=flat-square)
+![Edge Add-on](https://img.shields.io/static/v1?label=Edge%20Add-on&message=Available&color=blue&style=flat-square)
 
-## Features:
+![Coursera Toolkit Banner](./images/Screenshot1.png)
 
-- 📑 Auto done all videos and readings part
-- 💯 Auto do quizzes (Work in progress)
-- 👨‍🎓 Auto submit peer graded assignment (Maybe not work)
-- 📋 One-click for getting link of your submission.
-- ✅ Auto-grade highest score for other's submissions on Coursera.
-- 🤖 Switch your submission from AI grading to peer grading
+A small helper for Coursera learners — designed **for educational purposes only**.
 
-⚠ Don't overtrust the Auto quiz feature, it may give incorrect answers.
-
-## Installation
-
-There are two ways to install the extension:
-
-#### 1. From the [Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/coursera-toolkit-helper/cpebdnelbbfbnjbdafkkcgbbgbdbhhgb) or [Firefox Add-ons](https://addons.mozilla.org/en-GB/firefox/addon/coursera-tool/)
-
-\*Where's the Chrome Web Store version? - It's not yet available due to violating Chrome Web Store's Policy. If you want to add it to your Chrome, you can follow the second way below.
-
-#### 2. From the Github
-
-For user who dont want to install from Edge or Firefox, you can install it from the Github directly and add it to your Chrome manually.
-
-1. Download latest `build.zip` file from the [Releases](https://github.com/Pear104/coursera-tool/releases)
-2. Unzip the file
-3. Go to [Chrome extension manager](chrome://extensions/])
-4. Turn on "Developer mode"
-5. Click "Load unpacked" button
-6. Choose the unzipped folder
-
-> You can check this [link](https://ui.vision/howto/install-chrome-extension-from-file) for more detail instruction.
-
-## Overview
-
-![](./images/Screenshot1.png)
-
-![](./images/Screenshot2.png)
-
-![](./images/Screenshot3.png)
-
-## Support me! ☕
-
-The extension is totally free, but if you find it useful and want to support me, you can give me a ⭐, leave a feedback on the extension, or [Buy me a coffee](https://buymeacoffee.com/pear104)!
-
-I will be really thankfull for anything even if it is a coffee or just a kind comment towards my work, because that helps me a lot
+> ⚠️ _Don’t misuse this for official work or certificates. Do it by yourselk if it really matters._
 
 ---
 
-_**From FPT with ❤️**_
+## 🚀 Features
+
+- 📑 **Auto-complete** all videos and reading sections
+- 💯 **Auto-answer** quizzes _(WIP – may not be 100% accurate)_
+- 🧑 **Auto-submit** peer-graded assignments _(Some time doesn't work)_
+- 📋 **One-click** copy of your submission link
+- ✅ **Auto-grade** the highest score for peer submissions
+- 🤖 **Switch** your submission from AI grading to peer grading
+
+> ⚠️ **Caution:** Auto-quiz feature might not always provide the correct answers and Auto-submit feature might not always work.
+
+---
+
+## 📦 Installation
+
+### 🧩 Option 1: Install from Browser Add-ons
+
+- [Edge Add-ons Store](https://microsoftedge.microsoft.com/addons/detail/coursera-toolkit-helper/cpebdnelbbfbnjbdafkkcgbbgbdbhhgb)
+- [Firefox Add-ons Store](https://addons.mozilla.org/en-GB/firefox/addon/coursera-tool/)
+
+> ❌ _Chrome Web Store is not supported due to Chrome's policy restrictions._  
+> ✅ _Use manual installation for Chrome (see below)._
+
+---
+
+### 🛠 Option 2: Manual Installation via GitHub
+
+1. Download the latest `build.zip` from the [Releases Page](https://github.com/Pear104/coursera-tool/releases)
+2. Extract the contents
+3. Open Chrome and navigate to [Chrome Extension Manager](chrome://extensions/)
+4. Enable **Developer Mode** (top-right toggle)
+5. Click **"Load unpacked"**
+6. Select the extracted folder
+
+📘 Need more help? Check out this [step-by-step guide](https://ui.vision/howto/install-chrome-extension-from-file)
+
+---
+
+## 🖼 Preview
+
+![Screenshot 2](./images/Screenshot2.png)  
+![Screenshot 3](./images/Screenshot3.png)
+
+---
+
+## ☕ Support
+
+This extension is **100% free**. If you find it useful and want to support the project:
+
+- ⭐ Star the repository
+- 💬 Leave a feedback
+- [☕ Buy me a coffee](https://buymeacoffee.com/pear104)
+
+> Every kind gesture, whether a coffee or a kind comment, keeps this project alive and evolving. Thank you!
+
+---
+
+_Made with ❤️ from FPT_
