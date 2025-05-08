@@ -11,20 +11,16 @@ A small helper for Coursera learners — designed **for educational purposes onl
 
 > ⚠️ _Don’t misuse this for official work or certificates. Do it by yourselk if it really matters._
 
----
-
 ## 🚀 Features
 
 - 📑 **Auto-complete** all videos and reading sections
-- 💯 **Auto-answer** quizzes _(WIP – may not be 100% accurate)_
+- 💯 **Gemini Auto-answer** quizzes _(WIP – may not be 100% accurate)_
 - 🧑 **Auto-submit** peer-graded assignments _(Some time doesn't work)_
 - 📋 **One-click** copy of your submission link
 - ✅ **Auto-grade** the highest score for peer submissions
 - 🤖 **Switch** your submission from AI grading to peer grading
 
 > ⚠️ **Caution:** Auto-quiz feature might not always provide the correct answers and Auto-submit feature might not always work.
-
----
 
 ## 📦 Installation
 
@@ -35,8 +31,6 @@ A small helper for Coursera learners — designed **for educational purposes onl
 
 > ❌ _Chrome Web Store is not supported due to Chrome's policy restrictions._  
 > ✅ _Use manual installation for Chrome (see below)._
-
----
 
 ### 🛠 Option 2: Manual Installation via GitHub
 
@@ -49,14 +43,13 @@ A small helper for Coursera learners — designed **for educational purposes onl
 
 📘 Need more help? Check out this [step-by-step guide](https://ui.vision/howto/install-chrome-extension-from-file)
 
----
-
 ## 🖼 Preview
 
-![Screenshot 2](./images/Screenshot2.png)  
-![Screenshot 3](./images/Screenshot3.png)
+![Screenshot 2](./images/Screenshot2.png)
 
----
+## 😱 Feature For FPTers only
+
+![Screenshot 3](./images/Screenshot3.png)
 
 ## ☕ Support
 
@@ -67,6 +60,10 @@ This extension is **100% free**. If you find it useful and want to support the p
 - [☕ Buy me a coffee](https://buymeacoffee.com/pear104)
 
 > Every kind gesture, whether a coffee or a kind comment, keeps this project alive and evolving. Thank you!
+
+## 🐞 Report an Issue
+
+If you encounter a bug, have a suggestion, or want to request a new feature, please open an issue on GitHub or DM [me](https://www.facebook.com/profile.php?id=100074006097767)
 
 ---
 
