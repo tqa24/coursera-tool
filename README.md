@@ -69,4 +69,4 @@ If you encounter a bug, have a suggestion, or want to request a new feature, ple
 
 ---
 
-_Made with ❤️ from FPT_
+_From FPT with ❤️_
