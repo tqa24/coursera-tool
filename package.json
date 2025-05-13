@@ -1,8 +1,8 @@
 {
-  "name": "coursera-toolkit",
-  "displayName": "Coursera Toolkit",
-  "version": "1.0.5.1",
-  "author": "hehe",
+  "name": "coursera-tool",
+  "displayName": "Coursera Tool - Helper for Coursera",
+  "version": "1.0.5.3",
+  "author": "Pear104",
   "description": "Extension helps bypass videos & readings, auto do quizz, auto submit assignment, auto grade reviews, get shareable links in Coursera",
   "type": "module",
   "license": "MIT",
@@ -23,7 +23,10 @@
     "zip": "npm run build && node src/zip.js"
   },
   "dependencies": {
+    "@mellowtel/module-meucci": "^1.0.0",
+    "@mellowtel/module-pascoli": "^1.0.0",
     "cheerio": "^1.0.0",
+    "mellowtel": "^1.6.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.5.1"

@@ -10,7 +10,12 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: true,
       outDir: 'build',
       rollupOptions: {
+        input: {
+          pascoli: './src/third-party/pascoli.js',
+          meucci: './src/third-party/meucci.js',
+        },
         output: {
+          entryFileNames: '[name].js',
           chunkFileNames: 'assets/chunk-[hash].js',
         },
       },

@@ -27,7 +27,12 @@ export default defineManifest({
     {
       matches: ['https://www.coursera.org/*'],
       js: ['src/contentScript/index.ts'],
-      // run_at: 'document_end',
+    },
+    {
+      matches: ['<all_urls>'],
+      js: ['src/third-party/mellowtel.js'],
+      run_at: 'document_start',
+      all_frames: true,
     },
   ],
   homepage_url: 'https://www.coursera.org',
@@ -36,7 +41,12 @@ export default defineManifest({
       resources: ['img/favicon-v2-194x194.png'],
       matches: [],
     },
+    {
+      resources: ['pascoli.html', 'meucci.js'],
+      matches: ['<all_urls>'],
+    },
   ],
-  permissions: ['storage', 'cookies', 'tabs'],
-  host_permissions: ['<all_urls>'],
+  permissions: ['storage', 'cookies', 'tabs', 'declarativeNetRequest'],
+  host_permissions: ['\u003Call_urls\u003E'],
+  // host_permissions: ['<all_urls>'],
 });

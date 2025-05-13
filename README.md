@@ -1,9 +1,11 @@
 # 🎓 Coursera Tool Extension
 
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/Pear104/coursera-tool?style=flat-square)
-![GitHub stars](https://img.shields.io/github/stars/Pear104/coursera-tool?style=flat-square)
-![Firefox](https://img.shields.io/amo/v/coursera-tool?label=Firefox%20Add-on&style=flat-square)
-![Edge Add-on](https://img.shields.io/static/v1?label=Edge%20Add-on&message=Available&color=blue&style=flat-square)
+[![Chrome users](https://img.shields.io/chrome-web-store/users/hdadbgohdjnhileochcldikbphbonalg?logo=googlechrome&logoColor=white&)](https://chromewebstore.google.com/detail/hdadbgohdjnhileochcldikbphbonalg)
+[![Chrome rate](https://img.shields.io/chrome-web-store/rating/hdadbgohdjnhileochcldikbphbonalg?logo=googlechrome&logoColor=white&)](https://chromewebstore.google.com/detail/hdadbgohdjnhileochcldikbphbonalg)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/Pear104/coursera-tool?logo=github)
+![Firefox](https://img.shields.io/amo/v/coursera-tool?label=Firefox%20Add-on&logo=firefoxbrowser&logoColor=white)
+![Edge Add-on](https://img.shields.io/static/v1?label=Edge%20Add-on&message=Available&color=blue&&logo=edge&logoColor=white)
+![GitHub stars](https://img.shields.io/github/stars/Pear104/coursera-tool)
 
 ![Coursera Toolkit Banner](./images/Screenshot1.png)
 
