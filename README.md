@@ -1,7 +1,11 @@
 # 🎓 Coursera Tool Extension
 
+<!--
 [![Chrome users](https://img.shields.io/chrome-web-store/users/hdadbgohdjnhileochcldikbphbonalg?logo=googlechrome&logoColor=white&)](https://chromewebstore.google.com/detail/hdadbgohdjnhileochcldikbphbonalg)
-[![Chrome rate](https://img.shields.io/chrome-web-store/rating/hdadbgohdjnhileochcldikbphbonalg?logo=googlechrome&logoColor=white&)](https://chromewebstore.google.com/detail/hdadbgohdjnhileochcldikbphbonalg)
+[![Chrome rate](https://img.shields.io/chrome-web-store/rating/hdadbgohdjnhileochcldikbphbonalg?logo=googlechrome&logoColor=white&)](https://chromewebstore.google.com/detail/hdadbgohdjnhileochcldikbphbonalg) -->
+
+[![users](https://img.shields.io/badge/dynamic/json?label=users&query=activeInstallCount&url=https%3A%2F%2Fmicrosoftedge.microsoft.com%2Faddons%2Fgetproductdetailsbycrxid%2Fcpebdnelbbfbnjbdafkkcgbbgbdbhhgb)](https://microsoftedge.microsoft.com/addons/detail/coursera-tool-helper-fo/cpebdnelbbfbnjbdafkkcgbbgbdbhhgb)
+[![rating](https://img.shields.io/badge/dynamic/json?label=rating&query=averageRating&url=https%3A%2F%2Fmicrosoftedge.microsoft.com%2Faddons%2Fgetproductdetailsbycrxid%2Fcpebdnelbbfbnjbdafkkcgbbgbdbhhgb)](https://microsoftedge.microsoft.com/addons/detail/coursera-tool-helper-fo/cpebdnelbbfbnjbdafkkcgbbgbdbhhgb)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/Pear104/coursera-tool?logo=github)
 ![Firefox](https://img.shields.io/amo/v/coursera-tool?label=Firefox%20Add-on&logo=firefoxbrowser&logoColor=white)
 ![Edge Add-on](https://img.shields.io/static/v1?label=Edge%20Add-on&message=Available&color=blue&&logo=edge&logoColor=white)
