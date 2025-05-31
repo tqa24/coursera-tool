@@ -3,6 +3,7 @@ import { extendStringPrototype } from './helpers';
 import { addBadgeToLabel, collectUnmatchedQuestion } from './dom-utils';
 import { instructionPrompt, sourceInstructionPrompt } from './constants';
 import toast from 'react-hot-toast';
+import testSource from './keys/DXE291c.json';
 
 /**
  * Process quiz questions using source material
@@ -18,7 +19,7 @@ export const doWithSource = async (
   if (!location.href.includes('assignment-submission')) {
     return;
   }
-
+  const { geminiAPI } = await chrome.storage.local.get('geminiAPI');
   const { isDebugMode } = await chrome.storage.local.get('isDebugMode');
 
   // Ensure normalize is available
@@ -165,26 +166,42 @@ export const processAnswers = (
     let ok = false;
     let answer = answers[i].definition?.normalize();
     // console.log(`Processing answer for question ${i + 1}:`, answer);
+    const options = question.querySelectorAll('.rc-Option');
+    if (options.length > 0) {
+      for (const key of options) {
+        const keyText =
+          key
+            .querySelector('span:nth-child(3)')
+            ?.innerText?.normalize()
+            .replace(/[,.]+$/, '') ?? '';
+        // console.log('Key text:', keyText);
 
-    for (const key of question.querySelectorAll('.rc-Option')) {
-      const keyText =
-        key
-          .querySelector('span:nth-child(3)')
-          ?.innerText?.normalize()
-          .replace(/[,.]+$/, '') ?? '';
-      // console.log('Key text:', keyText);
-
-      if (answer.includes(keyText) || keyText.includes(answer)) {
-        ok = true;
-        let input = key.querySelector('input');
-        if (input) {
-          // Only click if this is the selected method
-          if (method === provider.toLowerCase()) {
-            input.click();
-            // console.log(`Selected answer "${keyText}" for question ${i + 1}`);
+        if (answer.includes(keyText) || keyText.includes(answer)) {
+          ok = true;
+          let input = key.querySelector('input');
+          if (input) {
+            // Only click if this is the selected method
+            if (method === provider.toLowerCase()) {
+              input.click();
+              // console.log(`Selected answer "${keyText}" for question ${i + 1}`);
+            }
+            addBadgeToLabel(input, provider);
           }
-          addBadgeToLabel(input, provider);
         }
+      }
+    } else {
+      try {
+        const inputElement = question.querySelector(
+          'input[type="text"], textarea, input[type="number"]',
+        );
+
+        if (inputElement) {
+          inputElement.click();
+          inputElement.value = answer;
+          inputElement.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      } catch (error) {
+        console.error('Error filling text input:', error);
       }
     }
 
@@ -259,24 +276,26 @@ export const doWithChatGPT = async (questions: NodeListOf<Element>, method: stri
  */
 export const doWithGemini = async (questions: NodeListOf<Element>, method: string) => {
   const { geminiAPI } = await chrome.storage.local.get('geminiAPI');
-  if (!geminiAPI && Method.Gemini == method) {
-    alert(
-      'Gemini API key not found, see the tutorial video to get one: https://www.youtube.com/watch?v=OVnnVnLZPEo and put it in the extension settings',
-    );
+  if (!geminiAPI) {
+    if (Method.Gemini == method) {
+      alert(
+        'Gemini API key not found, see the tutorial video to get one: https://www.youtube.com/watch?v=OVnnVnLZPEo and put it in the extension settings',
+      );
+    }
     return;
   }
 
   // Extract question data
   const questionData = extractQuestionData(questions);
-  console.log('questionData', questionData);
+  // console.log('questionData', questionData);
 
   // Prepare the prompt
   const prompt = JSON.stringify(questionData.map((q) => ({ term: q.term, definition: '' })));
 
   // API request body
   const body = {
-    system_instruction: { parts: { text: instructionPrompt } },
-    // system_instruction: { parts: { text: sourceInstructionPrompt } },
+    // system_instruction: { parts: { text: instructionPrompt } },
+    system_instruction: { parts: { text: sourceInstructionPrompt } },
     contents: [{ parts: [{ text: prompt }] }],
   };
 
@@ -290,7 +309,7 @@ export const doWithGemini = async (questions: NodeListOf<Element>, method: strin
         headers: { 'Content-Type': 'application/json' },
       },
     );
-    console.log('response', response);
+    // console.log('response', response);
     if (!response.ok && method == Method.Gemini) {
       if (response.status == 503) {
         const data = await response.json();

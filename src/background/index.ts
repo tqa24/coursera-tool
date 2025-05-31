@@ -5,7 +5,7 @@ let mellowtel: any;
 (async () => {
   mellowtel = new Mellowtel('24e87438', {
     MAX_DAILY_RATE: 400,
-    disableLogs: false,
+    disableLogs: true,
   });
   await mellowtel.initBackground();
 })();

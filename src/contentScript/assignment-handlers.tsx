@@ -81,9 +81,7 @@ export const resolveWeekMaterial = async () => {
             `https://www.coursera.org/api/opencourse.v1/user/${userId}/course/${slug}/item/${item.id}/lecture/videoEvents/ended?autoEnroll=false`,
             {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
+              headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ contentRequestBody: {} }),
             },
           ).then((res) => res.json());
@@ -92,9 +90,7 @@ export const resolveWeekMaterial = async () => {
             `https://www.coursera.org/api/onDemandSupplementCompletions.v1`,
             {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
+              headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 courseId: courseId,
                 itemId: item.id,
@@ -107,9 +103,7 @@ export const resolveWeekMaterial = async () => {
             `https://www.coursera.org/api/onDemandLtiUngradedLaunches.v1/?fields=endpointUrl%2CauthRequestUrl%2CsignedProperties`,
             {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
+              headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 courseId: courseId,
                 itemId: item.id,
@@ -128,9 +122,7 @@ export const resolveWeekMaterial = async () => {
             `https://www.coursera.org/api/onDemandWidgetProgress.v1/${userId}~${courseId}~${item.id}`,
             {
               method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-              },
+              headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 progressState: 'Completed',
                 sessionId,
@@ -152,7 +144,7 @@ export const resolveWeekMaterial = async () => {
  * Automatically handles quizzes
  */
 export const handleAutoquiz = async (course: string, isWithGemini: boolean = false) => {
-  toast.promise(
+  await toast.promise(
     async () => {
       if (!location.href.includes('/learn/')) {
         alert('This is not a course page, please go to your course page first');
@@ -176,13 +168,11 @@ export const handleAutoquiz = async (course: string, isWithGemini: boolean = fal
           console.log('Error fetching course data:', err);
           return { quizSrc: [] };
         });
-      console.log('courses', courses);
 
       // Start the quiz attempt if needed
       if (!location.href.includes('/attempt')) {
         await waitForSelector("button[data-testid='CoverPageActionButton']", 3600000)
           .then((item) => {
-            console.log('item', item);
             item.click();
           })
           .catch((error) => console.log(error));
@@ -190,20 +180,56 @@ export const handleAutoquiz = async (course: string, isWithGemini: boolean = fal
           "button[data-testid='StartAttemptModal__primary-button'], [data-testid='action-button']",
         )
           .then((item) => item.click())
-          .catch((error) => {
-            console.log(error);
-          });
+          .catch((error) => console.log(error));
       }
 
       // Wait for questions to load
       await waitForSelector('.css-1hhf6i, .rc-FormPartsQuestion', 20000);
       let questions = document.querySelectorAll('.css-1hhf6i, .rc-FormPartsQuestion');
+      const progressBar = document.querySelector('.css-mocfly');
+      if (progressBar) {
+        const progressCountText = document
+          .querySelector('.css-ox29tz')
+          ?.textContent?.replace('Question ', '');
+        const [currentText, progressLength] = progressCountText?.split(' of ') ?? [0, 0];
+        let current = parseInt(currentText + '');
+
+        do {
+          questions = document.querySelectorAll('.css-1hhf6i, .rc-FormPartsQuestion');
+          await doWithGemini(questions, method);
+          await doWithSource(questions, courses, method);
+          const button: HTMLElement = document.querySelector(
+            '.css-17bdvh .cds-105.cds-button-disableElevation.css-1drt86s',
+          )!;
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          button?.click();
+          current = parseInt(
+            document
+              .querySelector('.css-ox29tz')
+              ?.textContent?.replace('Question ', '')
+              .split(' of ')[0] + '',
+          );
+          console.log('current', current);
+          await waitForSelector(
+            '.cds-105.cds-button-disableElevation.cds-button-primary.css-rii46o',
+            1000,
+          )
+            .then(async (button) => {
+              button.click();
+              await waitForSelector("button[data-testid='dialog-submit-button']", 4000)
+                .then((agreeButton) => agreeButton.click())
+                .catch((error) => console.log(error));
+            })
+            .catch((error) => console.log(error));
+        } while (current < parseInt(progressLength + ''));
+      } else {
+        await doWithGemini(questions, method);
+        await doWithSource(questions, courses, method);
+      }
 
       // Process questions using available methods based on the selected method
       // await doWithChatGPT(questions, method);
       // await doWithDeepSeek(questions, method);
-      await doWithGemini(questions, method);
-      await doWithSource(questions, courses, method);
 
       // Check agreement checkbox
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -217,15 +243,18 @@ export const handleAutoquiz = async (course: string, isWithGemini: boolean = fal
       // Auto-submit if enabled
       let autoSubmit = isAutoSubmitQuiz ?? true;
       if (autoSubmit) {
-        waitForSelector('button[data-testid="submit-button"], button[data-test="submit-button"]')
-          .then((element: HTMLInputElement) => {
-            element.click();
-            element.scrollIntoView();
-          })
-          .catch((error) => console.log('Error submitting quiz:', error));
-        waitForSelector('button[data-testid="dialog-submit-button"]', 2000)
-          .then((element: HTMLInputElement) => element.click())
-          .catch((error) => console.log('Error confirming submission:', error));
+        if (progressBar) {
+        } else {
+          waitForSelector('button[data-testid="submit-button"], button[data-test="submit-button"]')
+            .then((element: HTMLInputElement) => {
+              element.click();
+              element.scrollIntoView();
+            })
+            .catch((error) => console.log('Error submitting quiz:', error));
+          waitForSelector('button[data-testid="dialog-submit-button"]', 2000)
+            .then((element: HTMLInputElement) => element.click())
+            .catch((error) => console.log('Error confirming submission:', error));
+        }
       }
     },
     {
@@ -352,8 +381,27 @@ export const handleReview = async () => {
   waitForSelector('button[data-js="open-course-link"]', 1000)
     .then((element: HTMLInputElement) => element.click())
     .catch((error) => {});
+  waitForSelector('.css-2imjyh .css-7jkbgo a', 1000)
+    .then((element: HTMLInputElement) => {
+      console.log('element', element);
+      element.click();
+    })
+    .catch((error) => {});
 
   let countTxt = '';
+  if (location.href.includes('/review/')) {
+    let currentLink = location.href;
+    let count = 0;
+    do {
+      await review();
+      if (location.href !== currentLink) {
+        count++;
+        currentLink = location.href;
+      }
+      console.log('count', count);
+    } while (count < 5);
+  }
+
   do {
     countTxt = await waitForSelector('td[data-testid="review-count"]', 1000)
       .then((item) => item.innerText)

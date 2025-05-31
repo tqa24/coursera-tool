@@ -8,7 +8,13 @@
 
 # production
 /build
+/build-firefox
+/build-edge
+/build-production
+/build-development
 /package
+
+
 
 # misc
 .DS_Store

@@ -28,7 +28,7 @@ const isElementLoaded = async (selector: any) => {
 isElementLoaded('html').then((selector: any) => {
   const container = document.createElement('div');
   container.id = 'coursera-tool';
-  container.style.zIndex = '5000';
+  container.style.zIndex = '10001';
   container.style.position = 'fixed';
   container.style.bottom = '36px';
   container.style.right = '36px';

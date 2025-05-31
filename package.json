@@ -1,7 +1,7 @@
 {
   "name": "coursera-tool",
   "displayName": "Coursera Tool - Helper for Coursera",
-  "version": "1.0.5.3",
+  "version": "1.0.5.4",
   "author": "Pear104",
   "description": "Extension helps bypass videos & readings, auto do quizz, auto submit assignment, auto grade reviews, get shareable links in Coursera",
   "type": "module",
@@ -18,6 +18,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build --watch",
+    "build:firefox": "vite build --mode firefox",
+    "build:edge": "vite build --mode edge",
     "preview": "vite preview",
     "fmt": "prettier --write '**/*.{tsx,ts,json,css,scss,md}'",
     "zip": "npm run build && node src/zip.js"

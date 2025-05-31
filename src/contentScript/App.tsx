@@ -277,12 +277,14 @@ export default function App() {
             className="!py-1"
             title="Start auto quiz"
             onClick={async () => {
+              setIsLoading((prev: LoadingProps) => ({ ...prev, isLoadingQuiz: true }));
               await sendTrackingEvent();
               try {
                 await handleAutoquiz(currentCourse);
               } catch (error) {
                 console.log(error);
               }
+              setIsLoading((prev: LoadingProps) => ({ ...prev, isLoadingQuiz: false }));
             }}
             isLoading={isLoading.isLoadingQuiz}
             icon={<Play width={22} height={22} />}

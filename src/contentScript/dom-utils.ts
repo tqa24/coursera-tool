@@ -98,6 +98,7 @@ export const collectUnmatchedQuestion = async (
   unmatched: any[],
   method: Method,
 ) => {
+  const { geminiAPI } = await chrome.storage.local.get('geminiAPI');
   const questionChild = question.querySelector('.css-x3q7o9 > div:nth-child(2), .rc-CML');
   const text = questionChild?.textContent?.normalize() ?? '';
   const options: any = question.querySelectorAll('.rc-Option');

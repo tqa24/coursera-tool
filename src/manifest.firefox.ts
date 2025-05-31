@@ -16,12 +16,12 @@ export default defineManifest({
     128: 'img/icon-edge.png',
   },
   action: {
-    // default_popup: 'popup.html',
+    default_popup: 'popup.html',
     default_icon: 'img/icon-edge.png',
   },
   background: {
     type: 'module',
-    service_worker: 'src/background/index.ts',
+    scripts: ['src/background/index.ts'],
   },
   content_scripts: [
     {
@@ -46,6 +46,13 @@ export default defineManifest({
       matches: ['<all_urls>'],
     },
   ],
-  permissions: ['storage', 'cookies', 'tabs', 'declarativeNetRequest'],
+  permissions: ['storage', 'cookies', 'tabs', 'declarativeNetRequestWithHostAccess'],
   host_permissions: ['\u003Call_urls\u003E'],
+  //@ts-ignore
+  browser_specific_settings: {
+    gecko: {
+      id: 'pear104@coursera-tool',
+      strict_min_version: '109.0',
+    },
+  },
 });
