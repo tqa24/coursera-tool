@@ -10,6 +10,7 @@ import {
   resolveWeekMaterial,
   getMaterial,
   getAllMaterials,
+  autoJoin,
 } from './index';
 import { Button } from './components/Button';
 import Checkbox from './components/Checkbox';
@@ -29,6 +30,13 @@ import GetShareableLink from './components/GetShareableLink';
 import toast, { Toaster } from 'react-hot-toast';
 import { courseraLogo } from './constants';
 import { sendTrackingEvent } from './tracking';
+import {
+  autoJoinAll,
+  getSpecializationMaterials,
+  openAllQuiz,
+  resolveDiscussion,
+  resolveMaterial,
+} from './auto-all';
 
 export default function App() {
   const [courseList, setCourseList] = useState<any>([]);
@@ -108,17 +116,9 @@ export default function App() {
         method: method == undefined ? Method.Source : method,
       });
       setIsShowControlPanel(isShowControlPanel == undefined ? true : isShowControlPanel);
-      let autoSubmit = isAutoSubmitQuiz == undefined ? true : isAutoSubmitQuiz;
-      if (
-        autoSubmit &&
-        (location.href.includes('/assignment-submission') ||
-          location.href.includes('/exam') ||
-          location.href.includes('/quiz'))
-      ) {
-        setIsLoading((prev: any) => ({ ...prev, isLoadingQuiz: true }));
-        await handleAutoquiz(courseCode);
-        setIsLoading((prev: any) => ({ ...prev, isLoadingQuiz: false }));
-      }
+
+      await handleAutoquiz(courseCode, setIsLoading);
+      await autoJoin();
     })();
   }, []);
 
@@ -277,14 +277,12 @@ export default function App() {
             className="!py-1"
             title="Start auto quiz"
             onClick={async () => {
-              setIsLoading((prev: LoadingProps) => ({ ...prev, isLoadingQuiz: true }));
               await sendTrackingEvent();
               try {
-                await handleAutoquiz(currentCourse);
+                await handleAutoquiz(currentCourse, setIsLoading);
               } catch (error) {
                 console.log(error);
               }
-              setIsLoading((prev: LoadingProps) => ({ ...prev, isLoadingQuiz: false }));
             }}
             isLoading={isLoading.isLoadingQuiz}
             icon={<Play width={22} height={22} />}
@@ -355,6 +353,27 @@ export default function App() {
             ))}
           </div>
         </div>
+        <Button
+          className="!py-2 mt-2 w-full"
+          title="Done all"
+          onClick={async () => {
+            // setIsLoading((prev: LoadingProps) => ({ ...prev, isLoadingQuiz: true }));
+            await sendTrackingEvent();
+            // await autoJoinAll();
+            const data = await getSpecializationMaterials();
+            console.log('data', data);
+            // await resolveMaterial(data);
+            // await resolveDiscussion(data);
+            await openAllQuiz(data);
+
+            // console.log('data', data);
+            // console.log('slug', slug);
+            // console.log('courseId', courseId);
+          }}
+          isLoading={isLoading.isLoadingQuiz}
+        >
+          Done all
+        </Button>
         {location.href.includes('debug=true') && (
           <div className="flex gap-4 items-center justify-start my-2">
             <Checkbox

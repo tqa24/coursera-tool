@@ -13,6 +13,7 @@ import {
   getMaterial,
   getAllMaterials,
   getMetadata,
+  autoJoin,
 } from './assignment-handlers';
 import { doWithGemini, doWithDeepSeek, doWithSource } from './api-services';
 import { sendTrackingEvent } from './tracking';
@@ -44,6 +45,7 @@ export {
   waitForSelector,
   generateRandomString,
   extendStringPrototype,
+  autoJoin,
 
   // Assignment handlers
   handleAutoquiz,
