@@ -1,14 +1,15 @@
 import { defineConfig } from 'vite';
 import { crx } from '@crxjs/vite-plugin';
 import react from '@vitejs/plugin-react';
-// import manifest from './src/manifest';
+//@ts-ignore
+import manifest from './src/manifest';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const manifest =
-    mode === 'firefox'
-      ? require('./src/manifest.firefox').default
-      : require('./src/manifest.edge').default;
+  // const manifest =
+  //   mode === 'firefox'
+  //     ? require('./src/manifest.firefox').default
+  //     : require('./src/manifest.edge').default;
 
   return {
     build: {

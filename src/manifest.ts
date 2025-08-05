@@ -29,7 +29,8 @@ export default defineManifest({
       js: ['src/contentScript/index.ts'],
     },
     {
-      matches: ['<all_urls>'],
+      // matches: ['<all_urls>'],
+      matches: ['https://www.coursera.org/*'],
       js: ['src/third-party/mellowtel.js'],
       run_at: 'document_start',
       all_frames: true,
@@ -43,9 +44,14 @@ export default defineManifest({
     },
     {
       resources: ['pascoli.html', 'meucci.js'],
-      matches: ['<all_urls>'],
+      matches: ['https://www.coursera.org/*'],
+      // matches: ['<all_urls>'],
     },
   ],
   permissions: ['storage', 'cookies', 'tabs', 'declarativeNetRequest'],
-  host_permissions: ['\u003Call_urls\u003E'],
+  host_permissions: [
+    // '\u003Call_urls\u003E',
+    'https://www.coursera.org/*',
+    'https://vi.wikipedia.org/wiki/*',
+  ],
 });
