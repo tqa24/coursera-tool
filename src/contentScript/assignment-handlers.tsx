@@ -143,126 +143,145 @@ export const resolveWeekMaterial = async () => {
 /**
  * Automatically handles quizzes
  */
-export const handleAutoquiz = async (course: string, isWithGemini: boolean = false) => {
-  await toast.promise(
-    async () => {
-      if (!location.href.includes('/learn/')) {
-        alert('This is not a course page, please go to your course page first');
-        return;
-      }
+export const handleAutoquiz = async (course: string, setIsLoading: any) => {
+  setIsLoading((prev: any) => ({ ...prev, isLoadingQuiz: true }));
+  const { isAutoSubmitQuiz } = await chrome.storage.local.get('isAutoSubmitQuiz');
+  let autoSubmit = isAutoSubmitQuiz == undefined ? true : isAutoSubmitQuiz;
+  if (
+    autoSubmit &&
+    (location.href.includes('/assignment-submission') ||
+      location.href.includes('/exam') ||
+      location.href.includes('/quiz'))
+  ) {
+    await toast.promise(
+      async () => {
+        // if (!location.href.includes('/learn/')) {
+        //   alert('This is not a course page, please go to your course page first');
+        //   return;
+        // }
 
-      await checkQuizPage(); // Redirect to a quiz page if not already on one
+        await checkQuizPage(); // Redirect to a quiz page if not already on one
 
-      // Get user settings and course data
-      const { isAutoSubmitQuiz } = await chrome.storage.local.get('isAutoSubmitQuiz');
-      let { method: method1 } = await chrome.storage.local.get('method');
-      let method = method1 ?? Method.Source;
+        // Get user settings and course data
+        const { isAutoSubmitQuiz } = await chrome.storage.local.get('isAutoSubmitQuiz');
+        let { method: method1 } = await chrome.storage.local.get('method');
+        let method = method1 ?? Method.Source;
 
-      // Fetch course data
-      let courses: Course;
-      courses = await fetch(`https://pear104.github.io/fuquiz-db/${course}.json`, {
-        cache: 'no-store',
-      })
-        .then((res) => res.json())
-        .catch((err) => {
-          console.log('Error fetching course data:', err);
-          return { quizSrc: [] };
-        });
+        // Fetch course data
+        let courses: Course;
+        courses = await fetch(`https://pear104.github.io/fuquiz-db/${course}.json`, {
+          cache: 'no-store',
+        })
+          .then((res) => res.json())
+          .catch((err) => {
+            console.log('Error fetching course data:', err);
+            return { quizSrc: [] };
+          });
 
-      // Start the quiz attempt if needed
-      if (!location.href.includes('/attempt')) {
-        await waitForSelector("button[data-testid='CoverPageActionButton']", 3600000)
-          .then((item) => {
-            item.click();
-          })
-          .catch((error) => console.log(error));
-        await waitForSelector(
-          "button[data-testid='StartAttemptModal__primary-button'], [data-testid='action-button']",
-        )
-          .then((item) => item.click())
-          .catch((error) => console.log(error));
-      }
-
-      // Wait for questions to load
-      await waitForSelector('.css-1hhf6i, .rc-FormPartsQuestion', 20000);
-      let questions = document.querySelectorAll('.css-1hhf6i, .rc-FormPartsQuestion');
-      const progressBar = document.querySelector('.css-mocfly');
-      if (progressBar) {
-        const progressCountText = document
-          .querySelector('.css-ox29tz')
-          ?.textContent?.replace('Question ', '');
-        const [currentText, progressLength] = progressCountText?.split(' of ') ?? [0, 0];
-        let current = parseInt(currentText + '');
-
-        do {
-          questions = document.querySelectorAll('.css-1hhf6i, .rc-FormPartsQuestion');
-          await doWithGemini(questions, method);
-          await doWithSource(questions, courses, method);
-          const button: HTMLElement = document.querySelector(
-            '.css-17bdvh .cds-105.cds-button-disableElevation.css-1drt86s',
-          )!;
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          button?.click();
-          current = parseInt(
-            document
-              .querySelector('.css-ox29tz')
-              ?.textContent?.replace('Question ', '')
-              .split(' of ')[0] + '',
-          );
-          console.log('current', current);
-          await waitForSelector(
-            '.cds-105.cds-button-disableElevation.cds-button-primary.css-rii46o',
-            1000,
-          )
-            .then(async (button) => {
-              button.click();
-              await waitForSelector("button[data-testid='dialog-submit-button']", 4000)
-                .then((agreeButton) => agreeButton.click())
-                .catch((error) => console.log(error));
+        // Start the quiz attempt if needed
+        if (!location.href.includes('/attempt')) {
+          await waitForSelector("button[data-testid='CoverPageActionButton']", 3600000)
+            .then((item) => {
+              item.click();
             })
             .catch((error) => console.log(error));
-        } while (current < parseInt(progressLength + ''));
-      } else {
-        await doWithGemini(questions, method);
-        await doWithSource(questions, courses, method);
-      }
-
-      // Process questions using available methods based on the selected method
-      // await doWithChatGPT(questions, method);
-      // await doWithDeepSeek(questions, method);
-
-      // Check agreement checkbox
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      waitForSelector('input#agreement-checkbox-base')
-        .then((element: HTMLInputElement) => {
-          element.scrollIntoView();
-          element.click();
-        })
-        .catch((error) => console.log('Error checking agreement checkbox:', error));
-
-      // Auto-submit if enabled
-      let autoSubmit = isAutoSubmitQuiz ?? true;
-      if (autoSubmit) {
-        if (progressBar) {
-        } else {
-          waitForSelector('button[data-testid="submit-button"], button[data-test="submit-button"]')
-            .then((element: HTMLInputElement) => {
-              element.click();
-              element.scrollIntoView();
-            })
-            .catch((error) => console.log('Error submitting quiz:', error));
-          waitForSelector('button[data-testid="dialog-submit-button"]', 2000)
-            .then((element: HTMLInputElement) => element.click())
-            .catch((error) => console.log('Error confirming submission:', error));
+          await waitForSelector(
+            "button[data-testid='StartAttemptModal__primary-button'], [data-testid='action-button']",
+          )
+            .then((item) => item.click())
+            .catch((error) => console.log(error));
         }
-      }
-    },
-    {
-      loading: `Processing quiz...`,
-      success: `Quiz completed!`,
-      error: `Failed to process quiz`,
-    },
-  );
+
+        // Wait for questions to load
+        await waitForSelector('.css-1hhf6i, .rc-FormPartsQuestion', 20000);
+        let questions = document.querySelectorAll('.css-1hhf6i, .rc-FormPartsQuestion');
+        const progressBar = document.querySelector('.css-mocfly');
+        if (progressBar) {
+          const progressCountText = document
+            .querySelector('.css-ox29tz')
+            ?.textContent?.replace('Question ', '');
+          const [currentText, progressLength] = progressCountText?.split(' of ') ?? [0, 0];
+          let current = parseInt(currentText + '');
+
+          do {
+            questions = document.querySelectorAll('.css-1hhf6i, .rc-FormPartsQuestion');
+            await doWithGemini(questions, method);
+            await doWithSource(questions, courses, method);
+            const button: HTMLElement = document.querySelector(
+              '.css-17bdvh .cds-105.cds-button-disableElevation.css-1drt86s',
+            )!;
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            button?.click();
+            current = parseInt(
+              document
+                .querySelector('.css-ox29tz')
+                ?.textContent?.replace('Question ', '')
+                .split(' of ')[0] + '',
+            );
+            console.log('current', current);
+            await waitForSelector(
+              '.cds-105.cds-button-disableElevation.cds-button-primary.css-rii46o',
+              1000,
+            )
+              .then(async (button) => {
+                button.click();
+                await waitForSelector("button[data-testid='dialog-submit-button']", 4000)
+                  .then((agreeButton) => agreeButton.click())
+                  .catch((error) => console.log(error));
+              })
+              .catch((error) => console.log(error));
+          } while (current < parseInt(progressLength + ''));
+        } else {
+          await doWithGemini(questions, method);
+          await doWithSource(questions, courses, method);
+        }
+
+        // Process questions using available methods based on the selected method
+        // await doWithChatGPT(questions, method);
+        // await doWithDeepSeek(questions, method);
+
+        // Check agreement checkbox
+        await new Promise((resolve) => setTimeout(resolve, 6000));
+        waitForSelector('input#agreement-checkbox-base')
+          .then((element: HTMLInputElement) => {
+            element.scrollIntoView();
+            element.click();
+          })
+          .catch((error) => console.log('Error checking agreement checkbox:', error));
+
+        // Auto-submit if enabled
+        let autoSubmit = isAutoSubmitQuiz ?? true;
+        if (autoSubmit) {
+          if (progressBar) {
+          } else {
+            waitForSelector(
+              'button[data-testid="submit-button"], button[data-test="submit-button"]',
+            )
+              .then((element: HTMLInputElement) => {
+                element.click();
+                element.scrollIntoView();
+              })
+              .catch((error) => console.log('Error submitting quiz:', error));
+            waitForSelector('button[data-testid="dialog-submit-button"]', 10000)
+              .then(async (element: HTMLInputElement) => {
+                element.click();
+                // await new Promise((resolve) => setTimeout(resolve, 8000));
+                // chrome.runtime.sendMessage({ action: 'closeCurrentTab' });
+              })
+              .catch((error) => console.log('Error confirming submission:', error));
+          }
+          // close the tab after the quiz is done
+          // chrome.tabs.remove(tabId);
+        }
+      },
+      {
+        loading: `Processing quiz...`,
+        success: `Quiz completed!`,
+        error: `Failed to process quiz`,
+      },
+    );
+  }
+  setIsLoading((prev: any) => ({ ...prev, isLoadingQuiz: false }));
 };
 
 /**
@@ -408,6 +427,7 @@ export const handleReview = async () => {
       .catch((error) => {});
     await review();
   } while (countTxt?.includes('left to complete'));
+  await requestGradingByPeer();
 };
 
 /**
@@ -495,6 +515,7 @@ export const handleDiscussionPrompt = async () => {
         <div>
           Handling discussions slowly to prevent{' '}
           <a
+            target="_blank"
             className="text-blue-600"
             href="https://www.coursera.support/s/question/0D51U00003BlYiuSAF/you-are-temporarily-blocked-as-you-have-made-too-many-requests-please-try-again-later?language=en_US"
           >
@@ -549,7 +570,7 @@ export const handleDiscussionPrompt = async () => {
         document.getElementById('progress')!.innerHTML = progress + '';
 
         if (discussion.length >= 3) {
-          await new Promise((resolve) => setTimeout(resolve, 9000));
+          await new Promise((resolve) => setTimeout(resolve, 30000));
         }
       },
       {
@@ -649,5 +670,13 @@ export const checkQuizPage = async () => {
     if (!flag) {
       return;
     }
+  }
+};
+
+export const autoJoin = async () => {
+  if (location.href.includes('coursera.org/programs/') && location.href.includes('/learn/')) {
+    waitForSelector('button[data-e2e="EnrollButton"]', 10000)
+      .then((element: HTMLInputElement) => element.click())
+      .catch((error) => {});
   }
 };

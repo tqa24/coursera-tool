@@ -31,3 +31,15 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     );
   }
 });
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'openTab' && message.url) {
+    chrome.tabs.create({ url: message.url });
+  }
+});
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'closeCurrentTab' && sender.tab?.id) {
+    chrome.tabs.remove(sender.tab.id);
+  }
+});
