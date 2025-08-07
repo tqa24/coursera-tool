@@ -1,13 +1,16 @@
-{
-  "ANO301c": {
+[
+  {
+    "code": "ANO301c",
     "status": "",
     "moocs": []
   },
-  "AID301c": {
+  {
+    "code": "AID301c",
     "status": "",
     "moocs": []
   },
-  "AIG202c": {
+  {
+    "code": "AIG202c",
     "status": "done",
     "moocs": [
       "/introduction-to-ai/",
@@ -16,11 +19,13 @@
       "/building-ai-powered-chatbots/"
     ]
   },
-  "BDI301c": {
+  {
+    "code": "BDI301c",
     "status": "",
     "moocs": []
   },
-  "BDI302c": {
+  {
+    "code": "BDI302c",
     "status": "done",
     "moocs": [
       "/big-data-introduction/",
@@ -30,23 +35,25 @@
       "/big-data-graph-analytics/"
     ]
   },
-  "CMC201c": {
+  {
     "status": "",
     "moocs": []
   },
-  "CRY303c": {
+  {
     "status": "",
     "moocs": []
   },
-  "CHN132c": {
+  {
     "status": "",
     "moocs": []
   },
-  "CSI106": {
+  {
+    "code": "CSI106",
     "status": "done",
     "moocs": ["/ai-for-everyone/"]
   },
-  "DWP301c": {
+  {
+    "code": "DWP301c",
     "status": "",
     "moocs": [
       "/introduction-to-cloud/",
@@ -63,7 +70,8 @@
       "/full-stack-software-developer-assessment/"
     ]
   },
-  "DXE291c": {
+  {
+    "code": "DXE291c",
     "status": "done",
     "moocs": [
       "/qun-l-nh-nc-v-hnh-chnh-cng/",
@@ -72,31 +80,38 @@
       "/tri-nghim-khch-hng-v-tip-th-s/"
     ]
   },
-  "ELP321c": {
+  {
+    "code": "ELP321c",
     "status": "",
     "moocs": []
   },
-  "ELP311c": {
+  {
+    "code": "ELP311c",
     "status": "",
     "moocs": []
   },
-  "ECC301c": {
+  {
+    "code": "ECC301c",
     "status": "",
     "moocs": []
   },
-  "ENG302c": {
+  {
+    "code": "ENG302c",
     "status": "",
     "moocs": []
   },
-  "EBC301c": {
+  {
+    "code": "EBC301c",
     "status": "",
     "moocs": []
   },
-  "ENM221c": {
+  {
+    "code": "ENM221c",
     "status": "",
     "moocs": []
   },
-  "ENW492c": {
+  {
+    "code": "ENW492c",
     "status": "done",
     "moocs": [
       "/grammar-punctuation/",
@@ -106,19 +121,23 @@
       "/academic-writing-capstone/"
     ]
   },
-  "EPE301c": {
+  {
+    "code": "EPE301c",
     "status": "",
     "moocs": []
   },
-  "FRS401c": {
+  {
+    "code": "FRS401c",
     "status": "",
     "moocs": []
   },
-  "HOM301c": {
+  {
+    "code": "HOM301c",
     "status": "",
     "moocs": ["/fundamentals-of-revenue-management", "/demandmanagement"]
   },
-  "HRM201c": {
+  {
+    "code": "HRM201c",
     "status": "done",
     "moocs": [
       "/compensation-management/",
@@ -128,7 +147,8 @@
       "/human-resources-management-capstone/"
     ]
   },
-  "ITA203c": {
+  {
+    "code": "ITA203c",
     "status": "done",
     "moocs": [
       "/is-it-governance/",
@@ -137,11 +157,13 @@
       "/it-infrastructure-and-emerging-trends/"
     ]
   },
-  "ITB302c": {
+  {
+    "code": "ITB302c",
     "status": "",
     "moocs": []
   },
-  "ITE302c": {
+  {
+    "code": "ITE302c",
     "status": "done",
     "moocs": [
       "/promote-ethical-data-driven-technologies/",
@@ -153,7 +175,8 @@
       "/ethics-of-artificial-intelligence/"
     ]
   },
-  "ITE303c": {
+  {
+    "code": "ITE303c",
     "status": "",
     "moocs": [
       "/ai-algorithm-limitations",
@@ -162,7 +185,8 @@
       "/ai-ethics-analysis"
     ]
   },
-  "IFT201c": {
+  {
+    "code": "IFT201c",
     "status": "done",
     "moocs": [
       "/introduction-to-futures-thinking/",
@@ -172,15 +196,18 @@
       "/urgent-optimism/"
     ]
   },
-  "LAB221c": {
+  {
+    "code": "LAB221c",
     "status": "",
     "moocs": []
   },
-  "LAW201c": {
+  {
+    "code": "LAW201c",
     "status": "done",
     "moocs": ["/eu-competition-law/", "/eu-law-doing-business/", "/european-law-fundamentals/"]
   },
-  "MSM201c": {
+  {
+    "code": "MSM201c",
     "status": "",
     "moocs": [
       "/social-media-marketing-introduction",
@@ -191,7 +218,8 @@
       "/facebook-social-media-marketing-capstone"
     ]
   },
-  "MKT205c": {
+  {
+    "code": "MKT205c",
     "status": "done",
     "moocs": [
       "/intro-international-marketing/",
@@ -202,7 +230,8 @@
       "/international-vertical-marketing-capstone-project/"
     ]
   },
-  "MKT208c": {
+  {
+    "code": "MKT208c",
     "status": "done",
     "moocs": [
       "/what-is-social/",
@@ -213,11 +242,13 @@
       "/social-marketing-capstone/"
     ]
   },
-  "NLP301c": {
+  {
+    "code": "NLP301c",
     "status": "",
     "moocs": []
   },
-  "NWC203c": {
+  {
+    "code": "NWC203c",
     "status": "",
     "moocs": [
       "/fundamentals-network-communications",
@@ -226,7 +257,8 @@
       "/tcp-ip-advanced"
     ]
   },
-  "OBE102c": {
+  {
+    "code": "OBE102c",
     "status": "done",
     "moocs": [
       "/visionary-leadership-meaning-maker/",
@@ -235,7 +267,8 @@
       "/organisational-design-know-your-organisation/"
     ]
   },
-  "PMG201c": {
+  {
+    "code": "PMG201c",
     "status": "done",
     "moocs": [
       "/project-planning/",
@@ -244,7 +277,8 @@
       "/project-management-capstone/"
     ]
   },
-  "PRP201c": {
+  {
+    "code": "PRP201c",
     "status": "done",
     "moocs": [
       "/python/",
@@ -254,19 +288,23 @@
       "/python-data-visualization/"
     ]
   },
-  "PRC391c": {
+  {
+    "code": "PRC391c",
     "status": "",
     "moocs": []
   },
-  "PRN292c": {
+  {
+    "code": "PRN292c",
     "status": "",
     "moocs": []
   },
-  "PMG202c": {
+  {
+    "code": "PMG202c",
     "status": "",
     "moocs": []
   },
-  "PRC392c": {
+  {
+    "code": "PRC392c",
     "status": "done",
     "moocs": [
       "/aws-cloud-technical-essentials/",
@@ -275,7 +313,8 @@
       "/aws-certified-solutions-architect-associate/"
     ]
   },
-  "SEO201c": {
+  {
+    "code": "SEO201c",
     "status": "done",
     "moocs": [
       "/search-engine-optimization/",
@@ -285,7 +324,8 @@
       "/seo-project/"
     ]
   },
-  "SSL101c": {
+  {
+    "code": "SSL101c",
     "status": "done",
     "moocs": [
       "/digital-literacy/",
@@ -295,7 +335,8 @@
       "/academic-skills-project/"
     ]
   },
-  "SWE201c": {
+  {
+    "code": "SWE201c",
     "status": "done",
     "moocs": [
       "/software-processes/",
@@ -304,7 +345,8 @@
       "/engineering-practices-secure-software-quality/"
     ]
   },
-  "SSC302c": {
+  {
+    "code": "SSC302c",
     "status": "",
     "moocs": [
       "/public-speaking",
@@ -313,7 +355,8 @@
       "/speak-to-inspire-ceremonial-motivational-speeches"
     ]
   },
-  "SYB302c": {
+  {
+    "code": "SYB302c",
     "status": "done",
     "moocs": [
       "/innovative-ideas/",
@@ -322,11 +365,13 @@
       "/entrepreneurship-capstone/"
     ]
   },
-  "WED201c": {
+  {
+    "code": "WED201c",
     "status": "",
     "moocs": ["/html", "/introcss", "/javascript", "/responsivedesign"]
   },
-  "WDU202c": {
+  {
+    "code": "WDU202c",
     "status": "done",
     "moocs": [
       "/visual-elements-user-interface-design/",
@@ -335,7 +380,8 @@
       "/web-design-wireframes-prototypes/"
     ]
   },
-  "WDU203c": {
+  {
+    "code": "WDU203c",
     "status": "done",
     "moocs": [
       "/introtoux-principles-and-processes/",
@@ -346,4 +392,4 @@
       "/user-experience-capstone/"
     ]
   }
-}
+]
