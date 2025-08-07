@@ -7,7 +7,6 @@
 [![users](https://img.shields.io/badge/dynamic/json?label=users&query=activeInstallCount&url=https%3A%2F%2Fmicrosoftedge.microsoft.com%2Faddons%2Fgetproductdetailsbycrxid%2Fcpebdnelbbfbnjbdafkkcgbbgbdbhhgb)](https://microsoftedge.microsoft.com/addons/detail/coursera-tool-helper-fo/cpebdnelbbfbnjbdafkkcgbbgbdbhhgb)
 [![rating](https://img.shields.io/badge/dynamic/json?label=rating&query=averageRating&url=https%3A%2F%2Fmicrosoftedge.microsoft.com%2Faddons%2Fgetproductdetailsbycrxid%2Fcpebdnelbbfbnjbdafkkcgbbgbdbhhgb)](https://microsoftedge.microsoft.com/addons/detail/coursera-tool-helper-fo/cpebdnelbbfbnjbdafkkcgbbgbdbhhgb)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/Pear104/coursera-tool?logo=github)
-![Firefox](https://img.shields.io/amo/v/coursera-tool?label=Firefox%20Add-on&logo=firefoxbrowser&logoColor=white)
 ![Edge Add-on](https://img.shields.io/static/v1?label=Edge%20Add-on&message=Available&color=blue&&logo=edge&logoColor=white)
 ![GitHub stars](https://img.shields.io/github/stars/Pear104/coursera-tool)
 
@@ -33,7 +32,6 @@ A small helper for Coursera learners — designed **for educational purposes onl
 ### 🧩 Option 1: Install from Browser Add-ons
 
 - [Edge Add-ons Store](https://microsoftedge.microsoft.com/addons/detail/coursera-toolkit-helper/cpebdnelbbfbnjbdafkkcgbbgbdbhhgb)
-- [Firefox Add-ons Store](https://addons.mozilla.org/en-GB/firefox/addon/coursera-tool/)
 
 > ❌ _Chrome Web Store is not supported due to Chrome's policy restrictions._  
 > ✅ _Use manual installation for Chrome (see below)._
