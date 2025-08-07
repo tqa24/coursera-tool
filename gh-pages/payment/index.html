@@ -79,7 +79,7 @@
 
       paymentForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const email = paymentForm.email.value;
+        const email = (paymentForm.email.value+"").trim();
         const amount = paymentForm.amount.value;
 
         if (!email || !amount) {

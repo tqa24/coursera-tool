@@ -46,7 +46,7 @@
 
       <div class="flex items-center gap-2 place-self-center">
         <a
-          href="/gh-pages"
+          href="/coursera-tool/gh-pages"
           class="ounded-lg py-2 px-4 rounded-lg inline-block bg-white font-bold my-2 text-blue-600 border border-zinc-300"
         >
           Về trang chủ
@@ -62,7 +62,7 @@
     <script>
       const params = new URLSearchParams(window.location.search);
       const account = document.getElementById('account');
-      const email = params.get('email');
+      const email = params.get('email')?.toLowerCase().trim();
       const expiresAt = params.get('expiresAt');
 
       if (email) {
