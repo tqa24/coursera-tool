@@ -10,10 +10,10 @@
   "AIG202c": {
     "status": "done",
     "moocs": [
-      "/introduction-to-ai",
-      "/generative-ai-introduction-and-applications",
-      "/generative-ai-prompt-engineering-for-everyone",
-      "/building-ai-powered-chatbots"
+      "/introduction-to-ai/",
+      "/generative-ai-introduction-and-applications/",
+      "/generative-ai-prompt-engineering-for-everyone/",
+      "/building-ai-powered-chatbots/"
     ]
   },
   "BDI301c": {
@@ -23,11 +23,11 @@
   "BDI302c": {
     "status": "done",
     "moocs": [
-      "/big-data-introduction",
-      "/big-data-management",
-      "/big-data-integration-processing",
-      "/big-data-machine-learning",
-      "/big-data-graph-analytics"
+      "/big-data-introduction/",
+      "/big-data-management/",
+      "/big-data-integration-processing/",
+      "/big-data-machine-learning/",
+      "/big-data-graph-analytics/"
     ]
   },
   "CMC201c": {
@@ -43,33 +43,33 @@
     "moocs": []
   },
   "CSI106": {
-    "status": "",
-    "moocs": ["/ai-for-everyone"]
+    "status": "done",
+    "moocs": ["/ai-for-everyone/"]
   },
   "DWP301c": {
     "status": "",
     "moocs": [
-      "/introduction-to-cloud",
-      "/introduction-to-web-development-with-html-css-javacript",
-      "/getting-started-with-git-and-github",
-      "/developing-frontend-apps-with-react",
-      "/developing-backend-apps-with-nodejs-and-express",
-      "/python-for-applied-data-science-ai",
-      "/python-project-for-ai-application-development",
-      "/developing-applications-with-sql-databases-and-django",
-      "/ibm-containers-docker-kubernetes-openshift",
-      "/applications-development-microservices-serverless-openshift",
-      "/ibm-cloud-native-full-stack-development-capstone",
-      "/full-stack-software-developer-assessment"
+      "/introduction-to-cloud/",
+      "/introduction-to-web-development-with-html-css-javacript/",
+      "/getting-started-with-git-and-github/",
+      "/developing-frontend-apps-with-react/",
+      "/developing-backend-apps-with-nodejs-and-express/",
+      "/python-for-applied-data-science-ai/",
+      "/python-project-for-ai-application-development/",
+      "/developing-applications-with-sql-databases-and-django/",
+      "/ibm-containers-docker-kubernetes-openshift/",
+      "/applications-development-microservices-serverless-openshift/",
+      "/ibm-cloud-native-full-stack-development-capstone/",
+      "/full-stack-software-developer-assessment/"
     ]
   },
   "DXE291c": {
-    "status": "",
+    "status": "done",
     "moocs": [
-      "/qun-l-nh-nc-v-hnh-chnh-cng",
-      "/dxe291-3",
-      "/kinh-t-s-v-ti-chnh-s",
-      "/tri-nghim-khch-hng-v-tip-th-s"
+      "/qun-l-nh-nc-v-hnh-chnh-cng/",
+      "/dxe291-3/",
+      "/kinh-t-s-v-ti-chnh-s/",
+      "/tri-nghim-khch-hng-v-tip-th-s/"
     ]
   },
   "ELP321c": {
@@ -97,13 +97,13 @@
     "moocs": []
   },
   "ENW492c": {
-    "status": "",
+    "status": "done",
     "moocs": [
-      "/grammar-punctuation",
-      "/getting-started-with-essay-writing",
-      "/advanced-writing",
-      "/introduction-to-research-for-essay-writing",
-      "/academic-writing-capstone"
+      "/grammar-punctuation/",
+      "/getting-started-with-essay-writing/",
+      "/advanced-writing/",
+      "/introduction-to-research-for-essay-writing/",
+      "/academic-writing-capstone/"
     ]
   },
   "EPE301c": {
@@ -119,22 +119,22 @@
     "moocs": ["/fundamentals-of-revenue-management", "/demandmanagement"]
   },
   "HRM201c": {
-    "status": "",
+    "status": "done",
     "moocs": [
-      "/human-resources-management-capstone",
-      "/compensation-management",
-      "/employee-performance",
-      "/recruiting-hiring-onboarding-employees",
-      "/managing-human-resources"
+      "/compensation-management/",
+      "/employee-performance/",
+      "/recruiting-hiring-onboarding-employees/",
+      "/managing-human-resources/",
+      "/human-resources-management-capstone/"
     ]
   },
   "ITA203c": {
-    "status": "",
+    "status": "done",
     "moocs": [
-      "/is-it-governance",
-      "/analysis-for-business-systems",
-      "/enterprise-systems",
-      "/it-infrastructure-and-emerging-trends"
+      "/is-it-governance/",
+      "/analysis-for-business-systems/",
+      "/enterprise-systems/",
+      "/it-infrastructure-and-emerging-trends/"
     ]
   },
   "ITB302c": {
@@ -142,15 +142,15 @@
     "moocs": []
   },
   "ITE302c": {
-    "status": "",
+    "status": "done",
     "moocs": [
-      "/promote-ethical-data-driven-technologies",
-      "/ethical-frameworks-action",
-      "/detect-mitigate-ethical-risks",
-      "/ethical-communication-data-driven-technologies",
-      "/ethical-data-driven-technology-leader",
-      "/preparing-for-your-certnexus-certification-exam",
-      "/ethics-of-artificial-intelligence"
+      "/promote-ethical-data-driven-technologies/",
+      "/ethical-frameworks-action/",
+      "/detect-mitigate-ethical-risks/",
+      "/ethical-communication-data-driven-technologies/",
+      "/ethical-data-driven-technology-leader/",
+      "/preparing-for-your-certnexus-certification-exam/",
+      "/ethics-of-artificial-intelligence/"
     ]
   },
   "ITE303c": {
@@ -163,13 +163,13 @@
     ]
   },
   "IFT201c": {
-    "status": "",
+    "status": "done",
     "moocs": [
-      "/introduction-to-futures-thinking",
-      "/forecasting-skills",
-      "/simulation-skills",
-      "/collaborative-foresight",
-      "/urgent-optimism"
+      "/introduction-to-futures-thinking/",
+      "/forecasting-skills/",
+      "/simulation-skills/",
+      "/collaborative-foresight/",
+      "/urgent-optimism/"
     ]
   },
   "LAB221c": {
@@ -177,8 +177,8 @@
     "moocs": []
   },
   "LAW201c": {
-    "status": "",
-    "moocs": ["/eu-competition-law", "/eu-law-doing-business", "/european-law-fundamentals"]
+    "status": "done",
+    "moocs": ["/eu-competition-law/", "/eu-law-doing-business/", "/european-law-fundamentals/"]
   },
   "MSM201c": {
     "status": "",
@@ -192,25 +192,25 @@
     ]
   },
   "MKT205c": {
-    "status": "",
+    "status": "done",
     "moocs": [
-      "/intro-international-marketing",
-      "/international-marketing-entry-execution",
-      "/b2b-marketing",
-      "/healthcare-marketing-hospitality-management",
-      "/international-entertainment-sports-marketing",
-      "/international-vertical-marketing-capstone-project"
+      "/intro-international-marketing/",
+      "/international-marketing-entry-execution/",
+      "/b2b-marketing/",
+      "/healthcare-marketing-hospitality-management/",
+      "/international-entertainment-sports-marketing/",
+      "/international-vertical-marketing-capstone-project/"
     ]
   },
   "MKT208c": {
-    "status": "",
+    "status": "done",
     "moocs": [
-      "/what-is-social",
-      "/importance-of-listening",
-      "/nurture-market-strategies",
-      "/social-imc",
-      "/business-of-social",
-      "/social-marketing-capstone"
+      "/what-is-social/",
+      "/importance-of-listening/",
+      "/nurture-market-strategies/",
+      "/social-imc/",
+      "/business-of-social/",
+      "/social-marketing-capstone/"
     ]
   },
   "NLP301c": {
@@ -227,31 +227,31 @@
     ]
   },
   "OBE102c": {
-    "status": "",
+    "status": "done",
     "moocs": [
-      "/visionary-leadership-meaning-maker",
-      "/leadership-adapt-your-style",
-      "/organisational-behaviour-know-your-people",
-      "/organisational-design-know-your-organisation"
+      "/visionary-leadership-meaning-maker/",
+      "/leadership-adapt-your-style/",
+      "/organisational-behaviour-know-your-people/",
+      "/organisational-design-know-your-organisation/"
     ]
   },
   "PMG201c": {
     "status": "done",
     "moocs": [
-      "/project-planning",
-      "/schedule-projects",
-      "/project-risk-management",
-      "/project-management-capstone"
+      "/project-planning/",
+      "/schedule-projects/",
+      "/project-risk-management/",
+      "/project-management-capstone/"
     ]
   },
   "PRP201c": {
-    "status": "",
+    "status": "done",
     "moocs": [
-      "/python",
-      "/python-data",
-      "/python-network-data",
-      "/python-databases",
-      "/python-data-visualization"
+      "/python/",
+      "/python-data/",
+      "/python-network-data/",
+      "/python-databases/",
+      "/python-data-visualization/"
     ]
   },
   "PRC391c": {
@@ -269,39 +269,39 @@
   "PRC392c": {
     "status": "done",
     "moocs": [
-      "/aws-cloud-technical-essentials",
-      "/architecting-solutions-on-aws",
-      "/introduction-to-designing-data-lakes-in-aws",
-      "/aws-certified-solutions-architect-associate"
+      "/aws-cloud-technical-essentials/",
+      "/architecting-solutions-on-aws/",
+      "/introduction-to-designing-data-lakes-in-aws/",
+      "/aws-certified-solutions-architect-associate/"
     ]
   },
   "SEO201c": {
-    "status": "",
+    "status": "done",
     "moocs": [
-      "/search-engine-optimization",
-      "/seo-fundamentals",
-      "/optimizing-web-search",
-      "/seo-tactics",
-      "/seo-project"
+      "/search-engine-optimization/",
+      "/seo-fundamentals/",
+      "/optimizing-web-search/",
+      "/seo-tactics/",
+      "/seo-project/"
     ]
   },
   "SSL101c": {
     "status": "done",
     "moocs": [
-      "/digital-literacy",
-      "/problem-solving-skills",
-      "/critical-thinking-skills",
-      "/communication-skills",
-      "/academic-skills-project"
+      "/digital-literacy/",
+      "/problem-solving-skills/",
+      "/critical-thinking-skills/",
+      "/communication-skills/",
+      "/academic-skills-project/"
     ]
   },
   "SWE201c": {
     "status": "done",
     "moocs": [
-      "/software-processes",
-      "/agile-software-development",
-      "/lean-software-development",
-      "/engineering-practices-secure-software-quality"
+      "/software-processes/",
+      "/agile-software-development/",
+      "/lean-software-development/",
+      "/engineering-practices-secure-software-quality/"
     ]
   },
   "SSC302c": {
@@ -313,14 +313,13 @@
       "/speak-to-inspire-ceremonial-motivational-speeches"
     ]
   },
-
   "SYB302c": {
-    "status": "",
+    "status": "done",
     "moocs": [
-      "/innovative-ideas",
-      "/innovative-entrepreneur",
-      "/startup-funding",
-      "/entrepreneurship-capstone"
+      "/innovative-ideas/",
+      "/innovative-entrepreneur/",
+      "/startup-funding/",
+      "/entrepreneurship-capstone/"
     ]
   },
   "WED201c": {
@@ -328,23 +327,23 @@
     "moocs": ["/html", "/introcss", "/javascript", "/responsivedesign"]
   },
   "WDU202c": {
-    "status": "",
+    "status": "done",
     "moocs": [
-      "/visual-elements-user-interface-design",
-      "/ux-design-fundamentals",
-      "/web-design-strategy",
-      "/web-design-wireframes-prototypes"
+      "/visual-elements-user-interface-design/",
+      "/ux-design-fundamentals/",
+      "/web-design-strategy/",
+      "/web-design-wireframes-prototypes/"
     ]
   },
   "WDU203c": {
-    "status": "",
+    "status": "done",
     "moocs": [
-      "/introtoux-principles-and-processes",
-      "/understanding-user-needs",
-      "/evaluating-designs-with-users",
-      "/ux-design-concept-wireframe",
-      "/ux-research-at-scale",
-      "/user-experience-capstone"
+      "/introtoux-principles-and-processes/",
+      "/understanding-user-needs/",
+      "/evaluating-designs-with-users/",
+      "/ux-design-concept-wireframe/",
+      "/ux-research-at-scale/",
+      "/user-experience-capstone/"
     ]
   }
 }
