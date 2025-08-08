@@ -57,7 +57,7 @@
   },
   {
     "code": "DWP301c",
-    "status": "done",
+    "status": "",
     "moocs": [
       "/introduction-to-cloud/",
       "/introduction-to-web-development-with-html-css-javacript/",
@@ -126,8 +126,13 @@
   },
   {
     "code": "EPE301c",
-    "status": "",
-    "moocs": []
+    "status": "done",
+    "moocs": [
+      "/emotional-and-social-intelligence/",
+      "/critical-thinking-skills-for-professionals/",
+      "/growth-mindset/",
+      "/adaptability-and-resiliency/"
+    ]
   },
   {
     "code": "FRS401c",
@@ -371,7 +376,7 @@
   {
     "code": "WED201c",
     "status": "done",
-    "moocs": ["/html", "/introcss", "/javascript", "/responsivedesign"]
+    "moocs": ["/html/", "/introcss/", "/javascript/", "/responsivedesign/"]
   },
   {
     "code": "WDU202c",
