@@ -36,14 +36,17 @@
     ]
   },
   {
+    "code": "CMC201c",
     "status": "",
     "moocs": []
   },
   {
+    "code": "CRY303c",
     "status": "",
     "moocs": []
   },
   {
+    "code": "CHN132c",
     "status": "",
     "moocs": []
   },
@@ -54,7 +57,7 @@
   },
   {
     "code": "DWP301c",
-    "status": "",
+    "status": "done",
     "moocs": [
       "/introduction-to-cloud/",
       "/introduction-to-web-development-with-html-css-javacript/",
