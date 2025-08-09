@@ -216,14 +216,14 @@
   },
   {
     "code": "MSM201c",
-    "status": "",
+    "status": "done",
     "moocs": [
-      "/social-media-marketing-introduction",
-      "/social-media-management",
-      "/social-media-advertising-fundamentals",
-      "/advertising-with-facebook",
-      "/measure-and-optimize-social-media-marketing-campaigns",
-      "/facebook-social-media-marketing-capstone"
+      "/social-media-marketing-introduction/",
+      "/social-media-management/",
+      "/social-media-advertising-fundamentals/",
+      "/advertising-with-facebook/",
+      "/measure-and-optimize-social-media-marketing-campaigns/",
+      "/facebook-social-media-marketing-capstone/"
     ]
   },
   {
