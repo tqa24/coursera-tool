@@ -125,6 +125,11 @@
     ]
   },
   {
+    "code": "ENW493c",
+    "status": "done",
+    "moocs": ["/research-methods/", "/research-methodologies/", "/being-researcher/"]
+  },
+  {
     "code": "EPE301c",
     "status": "done",
     "moocs": [
