@@ -96,7 +96,7 @@
         const result = await fetch('https://pear14.kalbas.com.vn/create-payment-link', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: [email], amount }),
+          body: JSON.stringify({ email: JSON.stringify([email]), amount }),
         }).then(async (res) => {
           const url = await res.text();
           console.log(url);
