@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Thanh toán</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="shortcut icon" href="https://pear104.github.io/coursera-tool/images/icon.png" type="image/x-icon" />
+    <link rel="shortcut icon" href="/images/icon.png" type="image/x-icon" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -24,7 +24,7 @@
     class="bg-gray-100 text-gray-900 quicksand w-screen h-screen flex justify-center items-center"
   >
     <div class="max-w-6xl mx-auto p-8 text-center mt-8">
-      <img src="/coursera-tool/images/failed.png" class="place-self-center w-24 mb-4" />
+      <img src="/images/failed.png" class="place-self-center w-24 mb-4" />
       <h1 class="text-4xl font-bold mb-4">Thanh Toán Thất Bại</h1>
 
       <div>
@@ -41,22 +41,13 @@
 
       <div class="flex items-center gap-2 place-self-center">
         <a
-          href="/coursera-tool/gh-pages"
+          href="/gh-pages"
           class="ounded-lg py-2 px-4 rounded-lg inline-block bg-white font-bold my-2 text-blue-600 border border-zinc-300"
         >
           Về trang chủ
         </a>
       </div>
     </div>
-    <script>
-      const params = new URLSearchParams(window.location.search);
-      const amount = params.get('amount');
-      const orderCode = params.get('orderCode');
-
-      if (amount) {
-        const formatted = Number(amount).toLocaleString('vi-VN') + ' VNĐ';
-        document.getElementById('amount').textContent = formatted;
-      }
-    </script>
+    <script></script>
   </body>
 </html>

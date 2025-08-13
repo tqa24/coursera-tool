@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thanh toán</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="shortcut icon" href="/coursera-tool/images/icon.png" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Arima:wght@100..700&family=Arimo:ital,wght@0,400..700;1,400..700&family=Arizonia&family=Audiowide&family=Bai+Jamjuree:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&family=Bayon&family=Bebas+Neue&family=Chivo:ital,wght@0,100..900;1,100..900&family=Edu+QLD+Hand:wght@400..700&family=Geist:wght@100..900&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Klee+One&family=Kumbh+Sans:wght@100..900&family=Lilita+One&family=Montez&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Orbitron:wght@400..900&family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&family=Playwrite+US+Modern:wght@100..400&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Questrial&family=Quicksand:wght@300..700&family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Satisfy&family=Space+Grotesk:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .quicksand {
+        font-family: 'Quicksand', sans-serif;
+        font-optical-sizing: auto;
+        font-style: normal;
+      }
+      ::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gray-100 text-gray-900 quicksand w-screen flex justify-center items-center overflow-scroll"
+  >
+    <div class="max-w-6xl mx-auto p-8 text-center mt-8">
+      <h1 class="text-2xl font-bold">Ủng hộ nhiều tài khoản</h1>
+      <div class="flex flex-wrap gap-4 justify-center"></div>
+      <div class="max-w-xl place-self-center my-4" id="payment-form">
+        <div id="arrayContainer" class="space-y-4 my-4">
+          <div class="flex items-center gap-4 array-item w-full">
+            <div class="flex-grow w-full">
+              <input
+                type="text"
+                id="item-1"
+                placeholder="Email"
+                class="px-3 py-2 rounded-lg min-w-[500px] border focus-within:outline-none border-zinc-400 transition-all duration-200"
+                oninput="updateArrayData()"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <button
+            onclick="addItem()"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-xl font-semibold shadow-lg flex items-center gap-2"
+          >
+            <span class="text-xl">+</span>
+            Thêm
+          </button>
+          <input
+            id="submit-button"
+            type="submit"
+            value="Thanh toán"
+            onclick="makePayment()"
+            class="bg-blue-600 disabled:cursor-default disabled:bg-gray-600 disabled:hover:bg-gray-600 rounded-lg py-1.5 px-4 text-white font-bold w-full cursor-pointer hover:bg-blue-700 transition-colors duration-200"
+          />
+        </div>
+        <div class="flex justify-end items-center gap-4 w-full mt-2">
+          <a href="/coursera-tool/gh-pages/">Về trang chủ</a>
+        </div>
+      </div>
+    </div>
+    <script>
+      let itemCount = 1; // Start from 1 since we have initial item
+      let arrayData = [];
+      const submitButton = document.getElementById('submit-button');
+
+      function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+      }
+
+      function validateAllEmails() {
+        updateArrayData();
+
+        if (arrayData.length === 0) {
+          alert('Vui lòng nhập ít nhất một email!');
+          return false;
+        }
+
+        const invalidEmails = [];
+        const emailInputs = document.querySelectorAll('#arrayContainer input');
+
+        arrayData.forEach((email, index) => {
+          if (!isValidEmail(email)) {
+            invalidEmails.push({
+              email: email,
+              index: index,
+              element: emailInputs[index],
+            });
+          }
+        });
+
+        if (invalidEmails.length > 0) {
+          const invalidEmailList = invalidEmails
+            .map((item) => `• ${item.email || 'Trống'}`)
+            .join('\n');
+          alert(
+            `Các email sau không đúng định dạng:\n\n${invalidEmailList}\n\nVui lòng kiểm tra lại!`,
+          );
+
+          invalidEmails.forEach((item) => {
+            if (item.element) {
+              item.element.classList.add('border-red-500', 'bg-red-50');
+              item.element.classList.remove('border-zinc-400');
+            }
+          });
+
+          if (invalidEmails[0].element) {
+            invalidEmails[0].element.focus();
+          }
+
+          return false;
+        }
+
+        return true;
+      }
+
+      async function makePayment() {
+        updateArrayData();
+        if (!validateAllEmails()) {
+          return;
+        }
+
+        submitButton.disabled = true;
+
+        const validEmails = arrayData.filter((email) => email && email.trim() !== '');
+        if (validEmails.length > 10) {
+          alert('Tối đa chỉ 10 tài khoản mỗi lần ủng hộ');
+          submitButton.disabled = false;
+          return;
+        }
+        const body = JSON.stringify(validEmails);
+        try {
+          const parsedBody = JSON.parse(body);
+          const result = await fetch('https://pear14.kalbas.com.vn/create-payment-link', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: JSON.stringify(parsedBody), amount: 10000 }),
+          }).then(async (res) => {
+            const url = await res.text();
+            location.href = url;
+          });
+        } catch (error) {
+          alert(`Có lỗi xảy ra khi đang thanh toán! Vui lòng thử lại sau!`);
+          location.reload();
+        }
+      }
+
+      function addItem() {
+        itemCount++;
+        const container = document.getElementById('arrayContainer');
+
+        const itemElement = document.createElement('div');
+        itemElement.className = 'animate-bounce-in';
+        itemElement.innerHTML = `
+                    <div class="flex items-center gap-4 array-item w-full">
+                        <!-- Input Field -->
+                        <div class="flex-grow">
+                            <input
+                                type="text"
+                                id="item-${itemCount}"
+                                placeholder="Email"
+                                class="px-3 py-2 rounded-lg min-w-[450px] border focus-within:outline-none border-zinc-400 transition-all duration-200"
+                                oninput="updateArrayData()"
+                            >
+                        </div>
+
+                        <!-- Remove Button -->
+                        <div class="flex-shrink-0">
+                            <button
+                                onclick="removeItem(this)"
+                                class="w-8 h-8 bg-red-500 hover:bg-red-600 text-xs text-white rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-lg"
+                            >
+                                ✕
+                            </button>
+                        </div>
+                    </div>
+            `;
+
+        container.appendChild(itemElement);
+        updateArrayData();
+
+        setTimeout(() => {
+          document.getElementById(`item-${itemCount}`).focus();
+        }, 100);
+      }
+
+      function removeItem(button) {
+        const itemElement = button.closest('.array-item');
+        itemElement.remove();
+        updateArrayData();
+      }
+
+      function updateArrayData() {
+        const container = document.getElementById('arrayContainer');
+        const items = container.querySelectorAll('.array-item');
+        arrayData = [];
+
+        items.forEach((item, index) => {
+          const input = item.querySelector('input');
+
+          if (input) {
+            const value = input.value.trim();
+            if (value) arrayData.push(value);
+          }
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        updateArrayData();
+      });
+    </script>
+  </body>
+</html>

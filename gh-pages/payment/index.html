@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Thanh toán</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="shortcut icon" href="https://pear104.github.io/coursera-tool/images/icon.png" type="image/x-icon" />
+    <link rel="shortcut icon" href="/images/icon.png" type="image/x-icon" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -25,6 +25,7 @@
   >
     <div class="max-w-6xl mx-auto p-8 text-center mt-8">
       <h1 class="text-4xl font-bold mb-4">Thanh Toán</h1>
+
       <form class="max-w-xl place-self-center my-4" id="payment-form">
         <div class="flex flex-col items-start place-self-center gap-2 w-full">
           Email tài khoản Coursera của bạn:
@@ -54,8 +55,12 @@
           value="Thanh toán"
           class="bg-blue-600 disabled:cursor-default disabled:bg-gray-600 disabled:hover:bg-gray-600 rounded-lg py-2 px-4 text-white font-bold mt-6 mb-2 w-full cursor-pointer hover:bg-blue-700 transition-colors duration-200"
         />
+        <div class="flex justify-between items-center gap-4 place-self-center w-full">
+          <a href="/gh-pages/">Quay lại</a>
+          <a href="/gh-pages/payment-n">Ủng hộ nhiều tài khoản</a>
+        </div>
         <div>
-          <p class="text-lg mb-10 text-gray-600 mt-4">
+          <p class="text-lg mb-10 text-gray-600 mt-4 text-justify">
             Sau khi chuyển khoản, nếu có lỗi xảy ra hoặc tài khoản chưa được kích hoạt, Vui lòng
             <a class="text-blue-600 underline" href="https://www.facebook.com/truong.le.567651"
               >nhắn tin cho tớ</a
@@ -79,7 +84,7 @@
 
       paymentForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const email = (paymentForm.email.value+"").trim();
+        const email = paymentForm.email.value;
         const amount = paymentForm.amount.value;
 
         if (!email || !amount) {
@@ -91,7 +96,7 @@
         const result = await fetch('https://pear14.kalbas.com.vn/create-payment-link', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, amount }),
+          body: JSON.stringify({ email: [email], amount }),
         }).then(async (res) => {
           const url = await res.text();
           console.log(url);
