@@ -171,6 +171,17 @@
     ]
   },
   {
+    "code": "HRM202c",
+    "status": "done",
+    "moocs": [
+      "/talent-acquisition/",
+      "/learning-and-development/",
+      "/compensation-and-benefits/",
+      "/employee-relations/",
+      "/compliance-and-risk-management/"
+    ]
+  },
+  {
     "code": "ITA203c",
     "status": "done",
     "moocs": [
