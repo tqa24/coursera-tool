@@ -84,6 +84,16 @@
     ]
   },
   {
+    "code": "EAL202c",
+    "status": "done",
+    "moocs": [
+      "/note-taking/",
+      "/academic-discussion-english/",
+      "/presentations-speaking-so-that-people-listen/",
+      "/speaking-listening-capstone/"
+    ]
+  },
+  {
     "code": "ELP321c",
     "status": "",
     "moocs": []
