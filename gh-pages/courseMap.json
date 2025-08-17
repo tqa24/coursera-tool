@@ -150,6 +150,17 @@
     ]
   },
   {
+    "code": "FIM302c",
+    "status": "done",
+    "moocs": [
+      "/discounted-cash-flow/",
+      "/valuation-multiples/",
+      "/financial-ratios/",
+      "/capital-budgeting/",
+      "/valuation-for-startups-project/"
+    ]
+  },
+  {
     "code": "FRS401c",
     "status": "",
     "moocs": []
