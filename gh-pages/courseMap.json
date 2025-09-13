@@ -12,6 +12,7 @@
   {
     "code": "AIG202c",
     "status": "done",
+    "spec": "/ai-foundations-for-everyone/",
     "moocs": [
       "/introduction-to-ai/",
       "/generative-ai-introduction-and-applications/",
@@ -27,6 +28,7 @@
   {
     "code": "BDI302c",
     "status": "done",
+    "spec": "/big-data/",
     "moocs": [
       "/big-data-introduction/",
       "/big-data-management/",
@@ -57,7 +59,7 @@
   },
   {
     "code": "DWP301c",
-    "status": "",
+    "status": "done",
     "moocs": [
       "/introduction-to-cloud/",
       "/introduction-to-web-development-with-html-css-javacript/",
@@ -86,6 +88,7 @@
   {
     "code": "EAL202c",
     "status": "done",
+    "spec": "/speaklistenenglish/",
     "moocs": [
       "/note-taking/",
       "/academic-discussion-english/",
@@ -142,6 +145,7 @@
   {
     "code": "EPE301c",
     "status": "done",
+    "spec": "/professional-skills-for-the-workplace/",
     "moocs": [
       "/emotional-and-social-intelligence/",
       "/critical-thinking-skills-for-professionals/",
@@ -152,6 +156,7 @@
   {
     "code": "FIM302c",
     "status": "done",
+    "spec": "/startup-valuation/",
     "moocs": [
       "/discounted-cash-flow/",
       "/valuation-multiples/",
@@ -162,8 +167,8 @@
   },
   {
     "code": "FRS401c",
-    "status": "",
-    "moocs": []
+    "status": "done",
+    "moocs": ["/access-controls/", "/security-operations/", "/systems-and-application-security/"]
   },
   {
     "code": "HOM301c",
@@ -173,6 +178,7 @@
   {
     "code": "HRM201c",
     "status": "done",
+    "spec": "/human-resource-management/",
     "moocs": [
       "/compensation-management/",
       "/employee-performance/",
@@ -184,6 +190,7 @@
   {
     "code": "HRM202c",
     "status": "done",
+    "spec": "/hrci-human-resource-associate/",
     "moocs": [
       "/talent-acquisition/",
       "/learning-and-development/",
@@ -195,6 +202,7 @@
   {
     "code": "ITA203c",
     "status": "done",
+    "spec": "/information-systems/",
     "moocs": [
       "/is-it-governance/",
       "/analysis-for-business-systems/",
@@ -210,6 +218,7 @@
   {
     "code": "ITE302c",
     "status": "done",
+    "spec": "/certified-ethical-emerging-technologist/",
     "moocs": [
       "/promote-ethical-data-driven-technologies/",
       "/ethical-frameworks-action/",
@@ -233,6 +242,7 @@
   {
     "code": "IFT201c",
     "status": "done",
+    "spec": "/futures-thinking/",
     "moocs": [
       "/introduction-to-futures-thinking/",
       "/forecasting-skills/",
@@ -249,11 +259,13 @@
   {
     "code": "LAW201c",
     "status": "done",
+    "spec": "/european-business-law/",
     "moocs": ["/eu-competition-law/", "/eu-law-doing-business/", "/european-law-fundamentals/"]
   },
   {
     "code": "MSM201c",
     "status": "done",
+    "spec": "/facebook-social-media-marketing/",
     "moocs": [
       "/social-media-marketing-introduction/",
       "/social-media-management/",
@@ -266,6 +278,7 @@
   {
     "code": "MKT205c",
     "status": "done",
+    "spec": "/international-marketing/",
     "moocs": [
       "/intro-international-marketing/",
       "/international-marketing-entry-execution/",
@@ -278,6 +291,7 @@
   {
     "code": "MKT208c",
     "status": "done",
+    "spec": "/social-media-marketing/",
     "moocs": [
       "/what-is-social/",
       "/importance-of-listening/",
@@ -295,6 +309,7 @@
   {
     "code": "NWC203c",
     "status": "done",
+    "spec": "/computer-communications/",
     "moocs": [
       "/fundamentals-network-communications/",
       "/peer-to-peer-protocols-local-area-networks/",
@@ -305,6 +320,7 @@
   {
     "code": "OBE102c",
     "status": "done",
+    "spec": "/hr-management-leadership/",
     "moocs": [
       "/visionary-leadership-meaning-maker/",
       "/leadership-adapt-your-style/",
@@ -315,6 +331,7 @@
   {
     "code": "PMG201c",
     "status": "done",
+    "spec": "/project-management/",
     "moocs": [
       "/project-planning/",
       "/schedule-projects/",
@@ -325,6 +342,7 @@
   {
     "code": "PRP201c",
     "status": "done",
+    "spec": "/python/",
     "moocs": [
       "/python/",
       "/python-data/",
@@ -361,6 +379,7 @@
   {
     "code": "SEO201c",
     "status": "done",
+    "spec": "/seo/",
     "moocs": [
       "/search-engine-optimization/",
       "/seo-fundamentals/",
@@ -372,6 +391,7 @@
   {
     "code": "SSL101c",
     "status": "done",
+    "spec": "/academic-skills/",
     "moocs": [
       "/digital-literacy/",
       "/problem-solving-skills/",
@@ -383,6 +403,7 @@
   {
     "code": "SWE201c",
     "status": "done",
+    "spec": "/software-development-lifecycle/",
     "moocs": [
       "/software-processes/",
       "/agile-software-development/",
@@ -392,7 +413,8 @@
   },
   {
     "code": "SSC302c",
-    "status": "",
+    "status": "done",
+    "spec": "/public-speaking/",
     "moocs": [
       "/public-speaking",
       "/inform-speech",
@@ -403,6 +425,7 @@
   {
     "code": "SYB302c",
     "status": "done",
+    "spec": "/business-entrepreneurship/",
     "moocs": [
       "/innovative-ideas/",
       "/innovative-entrepreneur/",
@@ -413,11 +436,13 @@
   {
     "code": "WED201c",
     "status": "done",
+    "spec": "/web-design/",
     "moocs": ["/html/", "/introcss/", "/javascript/", "/responsivedesign/"]
   },
   {
     "code": "WDU202c",
     "status": "done",
+    "spec": "/ui-ux-design/",
     "moocs": [
       "/visual-elements-user-interface-design/",
       "/ux-design-fundamentals/",
@@ -428,6 +453,7 @@
   {
     "code": "WDU203c",
     "status": "done",
+    "spec": "/michiganux/",
     "moocs": [
       "/introtoux-principles-and-processes/",
       "/understanding-user-needs/",
