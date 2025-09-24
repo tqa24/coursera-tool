@@ -252,9 +252,26 @@
     ]
   },
   {
+    "code": "IMC301c",
+    "status": "done",
+    "spec": "/marketing-mix/",
+    "moocs": [
+      "/brand-management/",
+      "/pricing-strategy/",
+      "/channel-management/",
+      "/integrated-marketing-communications/",
+      "/marketing-mix-capstone/"
+    ]
+  },
+  {
     "code": "LAB221c",
-    "status": "",
-    "moocs": []
+    "status": "done",
+    "moocs": [
+      "/java-introduction/",
+      "/object-oriented-programming-with-java/",
+      "/object-oriented-hierarchies-java/",
+      "/java-class-library/"
+    ]
   },
   {
     "code": "LAW201c",
@@ -303,8 +320,14 @@
   },
   {
     "code": "NLP301c",
-    "status": "",
-    "moocs": []
+    "status": "done",
+    "spec": "/natural-language-processing/",
+    "moocs": [
+      "/classification-vector-spaces-in-nlp/",
+      "/probabilistic-models-in-nlp/",
+      "/sequence-models-in-nlp/",
+      "/attention-models-in-nlp/"
+    ]
   },
   {
     "code": "NWC203c",
