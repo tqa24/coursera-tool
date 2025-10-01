@@ -58,6 +58,28 @@
     "moocs": ["/ai-for-everyone/"]
   },
   {
+    "code": "DMA301m",
+    "status": "done",
+    "moocs": [
+      "/marketing-analytics/",
+      "/digital-analytics/",
+      "/assess-for-success/"
+    ]
+  },
+  {
+    "code": "DMS301m",
+    "status": "done",
+    "spec": "/digital-marketing/",
+    "moocs": [
+      "/marketing-digital/",
+      "/digital-marketing-revolution/",
+      "/marketing-channels/",
+      "/marketing-plan/",
+      "/generative-ai-prompt-engineering-for-everyone/",
+      "/prompt-engineering-generative-ai-for-marketing-advertising/"
+    ]
+  },
+  {
     "code": "DWP301c",
     "status": "done",
     "moocs": [
@@ -112,6 +134,17 @@
     "moocs": []
   },
   {
+    "code": "ECC302c",
+    "status": "done",
+    "spec": "/management-multinational-cross-cultural-teams/",
+    "moocs": [
+      "/intro-multinational-cross-cultural-teams/",
+      "/cross-cultural-communication-management/",
+      "/cross-cultural-virtual-spaces-teams/",
+      "/leadership-in-mulitnational-cross-cultural-teams/"
+    ]
+  },
+  {
     "code": "ENG302c",
     "status": "",
     "moocs": []
@@ -140,7 +173,11 @@
   {
     "code": "ENW493c",
     "status": "done",
-    "moocs": ["/research-methods/", "/research-methodologies/", "/being-researcher/"]
+    "moocs": [
+      "/research-methods/",
+      "/research-methodologies/",
+      "/being-researcher/"
+    ]
   },
   {
     "code": "EPE301c",
@@ -168,12 +205,11 @@
   {
     "code": "FRS401c",
     "status": "done",
-    "moocs": ["/access-controls/", "/security-operations/", "/systems-and-application-security/"]
-  },
-  {
-    "code": "HOM301c",
-    "status": "",
-    "moocs": ["/fundamentals-of-revenue-management", "/demandmanagement"]
+    "moocs": [
+      "/access-controls/",
+      "/security-operations/",
+      "/systems-and-application-security/"
+    ]
   },
   {
     "code": "HRM201c",
@@ -197,6 +233,30 @@
       "/compensation-and-benefits/",
       "/employee-relations/",
       "/compliance-and-risk-management/"
+    ]
+  },
+  {
+    "code": "IFT201c",
+    "status": "done",
+    "spec": "/futures-thinking/",
+    "moocs": [
+      "/introduction-to-futures-thinking/",
+      "/forecasting-skills/",
+      "/simulation-skills/",
+      "/collaborative-foresight/",
+      "/urgent-optimism/"
+    ]
+  },
+  {
+    "code": "IMC301c",
+    "status": "done",
+    "spec": "/marketing-mix/",
+    "moocs": [
+      "/brand-management/",
+      "/pricing-strategy/",
+      "/channel-management/",
+      "/integrated-marketing-communications/",
+      "/marketing-mix-capstone/"
     ]
   },
   {
@@ -231,7 +291,8 @@
   },
   {
     "code": "ITE303c",
-    "status": "",
+    "status": "done",
+    "spec": "/ethics-in-ai/",
     "moocs": [
       "/ai-algorithm-limitations",
       "/ai-data-bias",
@@ -240,31 +301,7 @@
     ]
   },
   {
-    "code": "IFT201c",
-    "status": "done",
-    "spec": "/futures-thinking/",
-    "moocs": [
-      "/introduction-to-futures-thinking/",
-      "/forecasting-skills/",
-      "/simulation-skills/",
-      "/collaborative-foresight/",
-      "/urgent-optimism/"
-    ]
-  },
-  {
-    "code": "IMC301c",
-    "status": "done",
-    "spec": "/marketing-mix/",
-    "moocs": [
-      "/brand-management/",
-      "/pricing-strategy/",
-      "/channel-management/",
-      "/integrated-marketing-communications/",
-      "/marketing-mix-capstone/"
-    ]
-  },
-  {
-    "code": "LAB221c",
+    "code": "LAB211",
     "status": "done",
     "moocs": [
       "/java-introduction/",
@@ -277,19 +314,19 @@
     "code": "LAW201c",
     "status": "done",
     "spec": "/european-business-law/",
-    "moocs": ["/eu-competition-law/", "/eu-law-doing-business/", "/european-law-fundamentals/"]
+    "moocs": [
+      "/eu-competition-law/",
+      "/eu-law-doing-business/",
+      "/european-law-fundamentals/"
+    ]
   },
   {
-    "code": "MSM201c",
+    "code": "MCO201c",
     "status": "done",
-    "spec": "/facebook-social-media-marketing/",
     "moocs": [
-      "/social-media-marketing-introduction/",
-      "/social-media-management/",
-      "/social-media-advertising-fundamentals/",
-      "/advertising-with-facebook/",
-      "/measure-and-optimize-social-media-marketing-campaigns/",
-      "/facebook-social-media-marketing-capstone/"
+      "/transmedia-storytelling/",
+      "/communicate-with-impact/",
+      "/brand-and-content-marketing/"
     ]
   },
   {
@@ -316,6 +353,19 @@
       "/social-imc/",
       "/business-of-social/",
       "/social-marketing-capstone/"
+    ]
+  },
+  {
+    "code": "MSM201c",
+    "status": "done",
+    "spec": "/facebook-social-media-marketing/",
+    "moocs": [
+      "/social-media-marketing-introduction/",
+      "/social-media-management/",
+      "/social-media-advertising-fundamentals/",
+      "/advertising-with-facebook/",
+      "/measure-and-optimize-social-media-marketing-campaigns/",
+      "/facebook-social-media-marketing-capstone/"
     ]
   },
   {
@@ -363,18 +413,6 @@
     ]
   },
   {
-    "code": "PRP201c",
-    "status": "done",
-    "spec": "/python/",
-    "moocs": [
-      "/python/",
-      "/python-data/",
-      "/python-network-data/",
-      "/python-databases/",
-      "/python-data-visualization/"
-    ]
-  },
-  {
     "code": "PRC391c",
     "status": "",
     "moocs": []
@@ -400,6 +438,18 @@
     ]
   },
   {
+    "code": "PRP201c",
+    "status": "done",
+    "spec": "/python/",
+    "moocs": [
+      "/python/",
+      "/python-data/",
+      "/python-network-data/",
+      "/python-databases/",
+      "/python-data-visualization/"
+    ]
+  },
+  {
     "code": "SEO201c",
     "status": "done",
     "spec": "/seo/",
@@ -409,6 +459,17 @@
       "/optimizing-web-search/",
       "/seo-tactics/",
       "/seo-project/"
+    ]
+  },
+  {
+    "code": "SSC302c",
+    "status": "done",
+    "spec": "/public-speaking/",
+    "moocs": [
+      "/public-speaking",
+      "/inform-speech",
+      "/persuade-speech",
+      "/speak-to-inspire-ceremonial-motivational-speeches"
     ]
   },
   {
@@ -435,17 +496,6 @@
     ]
   },
   {
-    "code": "SSC302c",
-    "status": "done",
-    "spec": "/public-speaking/",
-    "moocs": [
-      "/public-speaking",
-      "/inform-speech",
-      "/persuade-speech",
-      "/speak-to-inspire-ceremonial-motivational-speeches"
-    ]
-  },
-  {
     "code": "SYB302c",
     "status": "done",
     "spec": "/business-entrepreneurship/",
@@ -455,12 +505,6 @@
       "/startup-funding/",
       "/entrepreneurship-capstone/"
     ]
-  },
-  {
-    "code": "WED201c",
-    "status": "done",
-    "spec": "/web-design/",
-    "moocs": ["/html/", "/introcss/", "/javascript/", "/responsivedesign/"]
   },
   {
     "code": "WDU202c",
@@ -484,6 +528,18 @@
       "/ux-design-concept-wireframe/",
       "/ux-research-at-scale/",
       "/user-experience-capstone/"
+    ]
+  },
+  {
+    "code": "WED201c",
+    "status": "done",
+    "spec": "/web-design/",
+    "moocs": [
+      "/html/",
+      "/introcss/",
+      "/javascript/",
+      "/responsivedesign/",
+      "/web-design-project/"
     ]
   }
 ]
